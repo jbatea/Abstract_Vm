@@ -1,6 +1,7 @@
 NAME		=	avm
 
 SRC_NAME	=	main.cpp			\
+				AbstractVm.class.cpp \
 
 SRC		=	$(addprefix srcs/, $(SRC_NAME))
 
