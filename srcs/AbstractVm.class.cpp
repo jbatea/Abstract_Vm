@@ -24,6 +24,16 @@ AbstractVm & AbstractVm::operator=( AbstractVm const & rhs) {
     return *this;
 }
 
+std::deque<const IOperand *> & AbstractVm::getStackRef( void ) {
+
+    return this->_stack;
+}
+
+std::deque<const IOperand *>  AbstractVm::getStack( void ) const {
+
+    return this->_stack;
+}
+
 void AbstractVm::checkArg( int ac, char **av) {
 
     if (ac == 2)
@@ -31,7 +41,7 @@ void AbstractVm::checkArg( int ac, char **av) {
     else if (ac == 1)
         this->isLines();
     else
-        std::cout << "Too much arguments, waiting for one or zero" << std::endl;
+        std::cout << "Too much arguments, Usage: ./avm Or ./avm ./sample.avm" << std::endl;
     return;
 }
 

@@ -8,17 +8,19 @@ class AbstractVm {
 public:
 
     AbstractVm( void ); // Default constructor
-    AbstractVm(AbstractVm const & src); // Copy constructor
+    AbstractVm( AbstractVm const & src ); // Copy constructor
     ~AbstractVm( void ); // Destructor
-    AbstractVm & operator=( AbstractVm const & rhs);// Assignement
+    AbstractVm & operator=( AbstractVm const & rhs );// Assignement
 
-    void checkArg(int ac, char **av) ;
+    void                            checkArg( int ac, char **av ); // Verif arg;
+    std::deque<const IOperand *> &  getStackRef( void ); // Stack getter
+    std::deque<const IOperand *>    getStack( void ) const; // Stack getter
 
 private:
 
     void isFiles(char *av);
     void isLines(void);
-    std::deque<IOperand *> _stack;
+    std::deque<const IOperand *> _stack;
 
 };
 #endif
