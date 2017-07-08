@@ -15,6 +15,9 @@ public:
     void                            checkArg( int ac, char **av ); // Verif arg;
     std::deque<const IOperand *> &  getStackRef( void ); // Stack getter
     std::deque<const IOperand *>    getStack( void ) const; // Stack getter
+    template <typename T>
+    IOperand const *                callFactory(eOperandType type, std::string const & value) {
+        Operand<T> const *operand = NULL; return(operand->createOperand(type, value)); };
 
 private:
 
