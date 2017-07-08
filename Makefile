@@ -9,7 +9,7 @@ OBJ		=	$(SRC:srcs/%.c=.obj/%.o)
 
 CC		=	clang++
 
-FLAGS		= 	-Wall -Werror -Wextra -std=c++11
+FLAGS		= 	-Wall -Werror -Wextra -std=c++11 
 
 INCLUDE		= 	-I includes
 

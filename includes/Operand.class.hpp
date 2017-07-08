@@ -26,19 +26,21 @@ public:
     int                 getPrecision(void) const { return 1;}; // Precision of the type of the instance
     eOperandType        getType(void) const { return INT8; }; // Type of the instance
     IOperand const *    createOperand( eOperandType type, std::string const & value ) const {
-        (void)type;
-        return createInt8(value);
+        typedef IOperand const *(Operand::*createPtr)(std::string const &) const;
+
+        createPtr a[] = { &Operand<T>::createInt8 , &Operand<T>::createInt16 , &Operand<T>::createInt32, &Operand<T>::createFloat, &Operand<T>::createDouble };
+        return (this->*a[type]) (value);
     }; // Create new operand
 
 private:
 
     T                   _value; // Value of the corresponding type
     std::string         _string; // String representation of value
-    IOperand const *    createInt8( std::string const & value ) const { Operand<int8_t> * _int8 = new Operand<int8_t>; _int8->_string = value; return _int8; }; // Create int8 operand
-    IOperand const *    createInt16( std::string const & value ) const {  Operand<int16_t> * _int16 = new Operand<int16_t>; _int16->_string = value; return _int16; }; // Create int16 operand
-    IOperand const *    createInt32( std::string const & value ) const {  Operand<int32_t> * _int32 = new Operand<int32_t>; _int32->_string = value; return _int32; }; // Create int32 operand
-    IOperand const *    createFloat( std::string const & value ) const {  Operand<float> * _float = new Operand<float>; _float->_string = value; return _float; }; // Create float operand
-    IOperand const *    createDouble( std::string const & value ) const {  Operand<double> * _double = new Operand<double>; _double->_string = value; return _double; }; // Create double operand
+    IOperand const *    createInt8( std::string const & value ) const { Operand<T> * _int8 = new Operand<T>; _int8->_string = value; return _int8; }; // Create int8 operand
+    IOperand const *    createInt16( std::string const & value ) const {  Operand<T> * _int16 = new Operand<T>; _int16->_string = value; return _int16; }; // Create int16 operand
+    IOperand const *    createInt32( std::string const & value ) const {  Operand<T> * _int32 = new Operand<T>; _int32->_string = value; return _int32; }; // Create int32 operand
+    IOperand const *    createFloat( std::string const & value ) const {  Operand<T> * _float = new Operand<T>; _float->_string = value; return _float; }; // Create float operand
+    IOperand const *    createDouble( std::string const & value ) const {  Operand<T> * _double = new Operand<T>; _double->_string = value; return _double; }; // Create double operand
 
 };
 
