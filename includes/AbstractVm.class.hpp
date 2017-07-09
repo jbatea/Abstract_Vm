@@ -19,17 +19,17 @@ public:
     template <typename T> void              push( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
     void                                    pop( void );
     void                                    dump( void );
-    void                                    exit( void );
+    void                                    print( void );
+    void                                    assert( std::string const & value );
+    void                                    exit( std::string const & error );
+    void                                    add( void );
+    void                                    sub( void );
+    void                                    mul( void );
+    void                                    div( void );
+    void                                    mod( void );
 
 private:
 
-    template <typename T> void  assert( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
-    template <typename T> void  add( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
-    template <typename T> void  sub( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
-    template <typename T> void  mul( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
-    template <typename T> void  div( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
-    template <typename T> void  mod( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
-    template <typename T> void  print( eOperandType type, std::string const & value ) { this->getStackRef().push_front(this->callFactory<T>(type, value)); return; };
     std::deque<const IOperand *>            _stack;
     void                                    isFiles(char *av);
     void                                    isLines(void);

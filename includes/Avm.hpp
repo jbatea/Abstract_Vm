@@ -4,6 +4,7 @@
 # include <iostream>
 # include <cstdlib>
 # include <cstdint>
+# include <cstring>
 # include <limits>
 # include <deque>
 # include <map>

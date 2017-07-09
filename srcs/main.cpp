@@ -2,16 +2,18 @@
 
 
 int     main(int ac, char **av)
-
 {
     AbstractVm  abstractvm;
 
     abstractvm.checkArg(ac, av);
-    abstractvm.push<int8_t>(INT8, "123");
     abstractvm.push<double>(DOUBLE, "123.56");
+    abstractvm.push<int8_t>(INT8, "65");
     abstractvm.dump();
-    abstractvm.pop();
+    abstractvm.add();
     abstractvm.dump();
-    abstractvm.exit();
+    abstractvm.push<int8_t>(INT8, "65");
+    abstractvm.sub();
+    abstractvm.dump();
+    abstractvm.exit("End of program");
     return 0;
 }
