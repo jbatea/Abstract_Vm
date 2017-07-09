@@ -54,3 +54,19 @@ void AbstractVm::isFiles(char *av) {
 void AbstractVm::isLines() {
         return;
 }
+
+void  AbstractVm::pop( void ) {
+    this->getStackRef().pop_front();
+    return;
+}
+
+void  AbstractVm::dump( void ) {
+    std::deque<const IOperand *>::iterator it = this->getStackRef().begin();
+
+    while (it != this->getStackRef().end())
+        std::cout << (*it++)->toString() << std::endl;return;
+}
+
+void AbstractVm::exit(void) {
+    std::exit(0);
+}

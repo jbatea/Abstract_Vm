@@ -7,10 +7,11 @@ int     main(int ac, char **av)
     AbstractVm  abstractvm;
 
     abstractvm.checkArg(ac, av);
-    abstractvm.getStackRef().push_front(abstractvm.callFactory<int8_t>(INT8, "123"));
-    std::deque<const IOperand *>::iterator it = abstractvm.getStackRef().begin();
-
-  while (it != abstractvm.getStackRef().end())
-    std::cout << (*it++)->toString() << std::endl;
+    abstractvm.push<int8_t>(INT8, "123");
+    abstractvm.push<double>(DOUBLE, "123.56");
+    abstractvm.dump();
+    abstractvm.pop();
+    abstractvm.dump();
+    abstractvm.exit();
     return 0;
 }
