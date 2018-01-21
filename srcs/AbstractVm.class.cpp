@@ -1,4 +1,4 @@
-#include "../includes/AbstractVm.class.hpp"
+#include "../includes/Avm.hpp"
 
 // Default constructor
 AbstractVm::AbstractVm( void ) {
@@ -13,6 +13,9 @@ AbstractVm::AbstractVm( void ) {
 
  // Destructor
 AbstractVm::~AbstractVm( void ) {
+    std::deque<const IOperand *>::iterator it = this->getStackRef().begin();
+      while (it != this->getStackRef().end())
+            (*it++)->~IOperand();
     return;
 }
 
@@ -29,33 +32,9 @@ std::deque<const IOperand *> & AbstractVm::getStackRef( void ) {
     return this->_stack;
 }
 
-std::deque<const IOperand *>  AbstractVm::getStack( void ) const {
-
-    return this->_stack;
-}
-
-void AbstractVm::checkArg( int ac, char **av) {
-
-    if (ac == 2)
-        this->isFiles(av[1]);
-    else if (ac == 1)
-        this->isLines();
-    else
-        std::cout << "Too much arguments, Usage: ./avm Or ./avm ./sample.avm" << std::endl;
-    return;
-}
-
-void AbstractVm::isFiles(char *av) {
-
-    (void)av;
-    return;
-}
-
-void AbstractVm::isLines() {
-        return;
-}
-
 void  AbstractVm::pop( void ) {
+    if (!this->getStackRef().front())
+        this->exit("Pop:: Empty Stack");
     this->getStackRef().pop_front();
     return;
 }
@@ -63,86 +42,100 @@ void  AbstractVm::pop( void ) {
 void  AbstractVm::dump( void ) {
     std::deque<const IOperand *>::iterator it = this->getStackRef().begin();
 
-    std::cout << "Dump: " << std::endl;
+    std::cout << "Avm:: Dump: " << std::endl;
     while (it != this->getStackRef().end())
-        std::cout << (*it++)->toString() << std::endl;return;
+        std::cout << (*it++)->toString() << std::endl;
+    return;
 }
 
 void AbstractVm::exit(std::string const & error) {
     std::cout << error << std::endl;
+    this->~AbstractVm();
     std::exit(0);
 }
 
 void AbstractVm::assert( std::string const & value ) {
 
-    if (std::strcmp(this->getStackRef().front()->toString().c_str(), value.c_str()))
-        this->exit("Assert Failed"); return;
+    if (this->getStackRef().front()->toString().compare(value))
+        this->exit("Assert:: Failed");
+    return;
 }
 
 void AbstractVm::print( void ) {
 
     if (this->getStackRef().front()->getType() != INT8)
-        this->exit("Print Failed");
-    std::cout << static_cast<char>(atoi(this->getStackRef().front()->toString().c_str())) << std::endl;
+        this->exit("Print:: Not a 8bit integer");
+    std::cout << "Avm:: Print: " <<  static_cast<char>(stoi(this->getStackRef().front()->toString())) << std::endl;
     return;
 }
 
 void AbstractVm::add( void ) {
 
-    int                 result;
+    const IOperand         *result;
 
-    result = atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    result = result + atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    this->push<int8_t>(INT8, std::to_string(result));
+    if (this->getStackRef().size() < 2)
+        this->exit("Add:: Missing operands");
+  	result = this->getStackRef().front();
+  	this->pop();
+  	result = *result + *(this->getStackRef().front());
+  	this->pop();
+  	this->push(result);
     return;
 }
 
 void AbstractVm::sub( void ) {
 
-    int                 result;
+const IOperand         *result;
 
-    result = atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    result = result - atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    this->push<int8_t>(INT8, std::to_string(result));
+  	result = this->getStackRef().front();
+  	this->pop();
+  	result = *result - *(this->getStackRef().front());
+  	this->pop();
+  	this->push(result);
     return;
 }
 
 void AbstractVm::mul( void ) {
+const IOperand         *result;
 
-    int                 result;
-
-    result = atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    result = result * atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    this->push<int8_t>(INT8, std::to_string(result));
+  	result = this->getStackRef().front();
+  	this->pop();
+  	result = *result * *(this->getStackRef().front());
+  	this->pop();
+  	this->push(result);
     return;
 }
 
 void AbstractVm::div( void ) {
+const IOperand         *result;
 
-    int                 result;
-
-    result = atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    result = result / atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    this->push<int8_t>(INT8, std::to_string(result));
+  	result = this->getStackRef().front();
+  	this->pop();
+  	result = *result / *(this->getStackRef().front());
+  	this->pop();
+  	this->push(result);
     return;
 }
 
 void AbstractVm::mod( void ) {
+    const IOperand         *result;
 
-    int                 result;
-
-    result = atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    result = result % atoi(this->getStackRef().front()->toString().c_str());
-    this->pop();
-    this->push<int8_t>(INT8, std::to_string(result));
+      	result = this->getStackRef().front();
+      	this->pop();
+      	result = *result % *(this->getStackRef().front());
+      	this->pop();
+      	this->push(result);
     return;
 }
+
+void  AbstractVm::create( eOperandType type, std::string const & value ) {
+    std::cout << "Avm:: Create: " << std::endl;
+    this->push(Factory::getFactory()->createOperand(type, value));
+    return;
+  };
+
+void  AbstractVm::push( const IOperand *operand ) {
+    std::cout << "Avm:: Push: " << std::endl;
+    this->getStackRef().push_front(operand);
+    return;
+  };
