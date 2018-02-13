@@ -10,6 +10,7 @@
 # include <map>
 # include <memory>
 # include <functional>
+# include <math.h>
 
 enum eOperandType
 {

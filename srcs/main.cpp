@@ -18,15 +18,13 @@ void checkArg( int ac, char **av) {
 int     main(int ac, char **av)
 {
     AbstractVm  abstractvm;
-    Factory		*factory;
 
    	checkArg(ac, av);
-   	factory = Factory::getFactory();
     abstractvm.create(INT8, "79");
     abstractvm.print();
     abstractvm.create(INT8, "12");
     abstractvm.dump();
-    abstractvm.add();
+    abstractvm.sub();
     abstractvm.exit("End of program");
     return 0;
 }

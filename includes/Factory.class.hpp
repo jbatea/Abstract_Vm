@@ -13,12 +13,13 @@ class Factory {
 
   	static void deleteFactory()
   	{
-    if (_factory)
-    {
-       delete _factory;
-       _factory = NULL;
-    }
-  }
+    	if (_factory)
+    	{
+       		delete _factory;
+       		_factory = NULL;
+    	}
+  	}
+
     IOperand const * createOperand( eOperandType type, std::string const & value ) const;
 
 	private:

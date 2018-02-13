@@ -89,7 +89,7 @@ const IOperand         *result;
 
   	result = this->getStackRef().front();
   	this->pop();
-  	result = *result - *(this->getStackRef().front());
+  	result = *(this->getStackRef().front()) - *result;
   	this->pop();
   	this->push(result);
     return;
@@ -100,7 +100,7 @@ const IOperand         *result;
 
   	result = this->getStackRef().front();
   	this->pop();
-  	result = *result * *(this->getStackRef().front());
+  	result = *(this->getStackRef().front()) * *result;
   	this->pop();
   	this->push(result);
     return;
@@ -111,7 +111,7 @@ const IOperand         *result;
 
   	result = this->getStackRef().front();
   	this->pop();
-  	result = *result / *(this->getStackRef().front());
+  	result = *(this->getStackRef().front()) / *result;
   	this->pop();
   	this->push(result);
     return;
@@ -122,7 +122,7 @@ void AbstractVm::mod( void ) {
 
       	result = this->getStackRef().front();
       	this->pop();
-      	result = *result % *(this->getStackRef().front());
+      	result = *(this->getStackRef().front()) % *result;
       	this->pop();
       	this->push(result);
     return;

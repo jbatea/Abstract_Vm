@@ -39,21 +39,21 @@
 
 	IOperand const *    Factory::createInt8( std::string const & value ) const {
       //std::cout << "Create int8:: value -> " << value  << std::endl;
-		return new Operand<int8_t>(INT8, value);
+		return new Operand<int8_t>(INT8, stoi(value));
 	}; // Create int8 operand
 
 	IOperand const *    Factory::createInt16( std::string const & value ) const {
-		return new Operand<int16_t>(INT16, value);
+		return new Operand<int16_t>(INT16, stoi(value));
 	}; // Create int16 operand
 
 	IOperand const *    Factory::createInt32( std::string const & value ) const {
-		return new Operand<int32_t>(INT32, value);
+		return new Operand<int32_t>(INT32, stoi(value));
 	}; // Create int32 operand
 
 	IOperand const *    Factory::createFloat( std::string const & value ) const {
-		return new Operand<float>(FLOAT, value);
+		return new Operand<float>(FLOAT, stof(value));
 	}; // Create float operand
 
 	IOperand const *    Factory::createDouble( std::string const & value ) const {
-		return new Operand<double>(DOUBLE, value);
+		return new Operand<double>(DOUBLE, stof(value));
 	}; // Create double operand
