@@ -1,6 +1,5 @@
 #ifndef OPERAND_CLASS_HPP
 #define OPERAND_CLASS_HPP
-#include <cxxabi.h>
 
 template <typename T>
 class Operand : public IOperand {
@@ -16,11 +15,13 @@ class Operand : public IOperand {
 		return;
 	}; // Copy constructor
 
-	Operand<T>(eOperandType type, T value) {
-		this->_value = value;
+	Operand<T>(eOperandType type, std::string const & string) {
 		this->_type = type;
-		this->_string = std::to_string(value);
-		std::cout << "Operand():: value -> " << this->toString()  << std::endl;
+		this->_string = string;
+		this->_value = stof(string);
+//		std::cout << "Create Operand:: value -> " <<  (int16_t)value
+//			<< " string -> " << this->_string << " type -> " << this->_type << std::endl;
+
 		return;
 	}
 
@@ -30,61 +31,62 @@ class Operand : public IOperand {
 
 	Operand<T> & operator=( Operand<T> const & rhs ) {
 		if (this != &rhs) {
-			this->_value = rhs.getValue();
 			this->_type = rhs.getType();
 			this->_string = rhs.toString();
+			this->_value = stof(rhs.toString());
 		 }
 		 return *this;
 	 };
 
 	IOperand const *    operator+( IOperand const & rhs ) const {
-		T value;
-		value = this->_value + (dynamic_cast<Operand<T> const *>(&rhs))->getValue();
-
-   		return Factory::getFactory()->createOperand(INT8, std::to_string(value));
+   		return Factory::getFactory()->createOperand(getType(rhs),
+   			toString(this->_value + stof(rhs.toString())));
 	}; // Sum
 
 	IOperand const *    operator-( IOperand const & rhs ) const {
-		T value;
-    	value = this->_value - (dynamic_cast<Operand<T> const *>(&rhs))->getValue();
-
-       	return Factory::getFactory()->createOperand(INT8, std::to_string(value));
+	return Factory::getFactory()->createOperand(getType(rhs),
+			toString(this->_value - stof(rhs.toString())));
 	}; // Difference
 
 	IOperand const *    operator*( IOperand const & rhs ) const {
-		T value;
-    	value = this->_value * (dynamic_cast<Operand<T> const *>(&rhs))->getValue();
-
-       	return Factory::getFactory()->createOperand(INT8, std::to_string(value));
+       	return Factory::getFactory()->createOperand(getType(rhs),
+       		toString(this->_value * stof(rhs.toString())));
 	}; // Product
 
 	IOperand const *    operator/( IOperand const & rhs ) const {
-		T value;
-        value = this->_value / (dynamic_cast<Operand<T> const *>(&rhs))->getValue();
-
-        return Factory::getFactory()->createOperand(INT8, std::to_string(value));
+        return Factory::getFactory()->createOperand(getType(rhs),
+			toString(this->_value / stof(rhs.toString())));
 	}; // Quotient
 
 	IOperand const *    operator%( IOperand const & rhs ) const {
-		T value;
-        value = fmod(this->_value, (dynamic_cast<Operand<T> const *>(&rhs))->getValue());
-
-        return Factory::getFactory()->createOperand(INT8, std::to_string(value));
+        return Factory::getFactory()->createOperand(getType(rhs),
+        	toString(fmod(this->_value, stof(rhs.toString()))));
 	}; // Modulo
+
+	int                 getPrecision(void) const {
+		return this->_type;
+	}; // Precision of the type of the instance
 
 	eOperandType        getType(void) const {
 		return this->_type;
 	}; // Type of the instance
 
-	int                 getPrecision(void) const { return this->_type; }; // Precision of the type of the instance
+	eOperandType		getType(IOperand const & rhs) const {
+    		return (rhs.getPrecision() < getPrecision()) ?
+    			getType() : rhs.getType();
+    }
 
 	std::string const & toString( void ) const {
 		return this->_string;
 	}; // String representation of value
 
-	T					getValue() const {
-		return this->_value;
-	}
+	std::string const toString(double value) const {
+        std::ostringstream str;
+        str << value;
+        std::string string = str.str();
+        return string;
+    }
+
 
 	private:
 

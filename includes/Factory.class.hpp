@@ -5,21 +5,8 @@ class Factory {
 
 	public:
 
-	static Factory *getFactory()
-  	{
-    	if (!_factory) _factory =  new Factory();
-    	return _factory;
-  	}
-
-  	static void deleteFactory()
-  	{
-    	if (_factory)
-    	{
-       		delete _factory;
-       		_factory = NULL;
-    	}
-  	}
-
+	static Factory *getFactory();
+  	static void deleteFactory();
     IOperand const * createOperand( eOperandType type, std::string const & value ) const;
 
 	private:

@@ -72,6 +72,7 @@ void AbstractVm::print( void ) {
 void AbstractVm::add( void ) {
 
     const IOperand         *result;
+    std::cout << "Avm:: Add: " << std::endl;
 
     if (this->getStackRef().size() < 2)
         this->exit("Add:: Missing operands");
@@ -86,6 +87,7 @@ void AbstractVm::add( void ) {
 void AbstractVm::sub( void ) {
 
 const IOperand         *result;
+    std::cout << "Avm:: Sub: " << std::endl;
 
   	result = this->getStackRef().front();
   	this->pop();
@@ -97,6 +99,7 @@ const IOperand         *result;
 
 void AbstractVm::mul( void ) {
 const IOperand         *result;
+    std::cout << "Avm:: Mul: " << std::endl;
 
   	result = this->getStackRef().front();
   	this->pop();
@@ -108,6 +111,7 @@ const IOperand         *result;
 
 void AbstractVm::div( void ) {
 const IOperand         *result;
+    std::cout << "Avm:: Div: " << std::endl;
 
   	result = this->getStackRef().front();
   	this->pop();
@@ -119,6 +123,7 @@ const IOperand         *result;
 
 void AbstractVm::mod( void ) {
     const IOperand         *result;
+    std::cout << "Avm:: Mod: " << std::endl;
 
       	result = this->getStackRef().front();
       	this->pop();
@@ -129,13 +134,12 @@ void AbstractVm::mod( void ) {
 }
 
 void  AbstractVm::create( eOperandType type, std::string const & value ) {
-    std::cout << "Avm:: Create: " << std::endl;
     this->push(Factory::getFactory()->createOperand(type, value));
     return;
-  };
+};
 
 void  AbstractVm::push( const IOperand *operand ) {
-    std::cout << "Avm:: Push: " << std::endl;
+//    std::cout << "Avm:: Push: " << std::endl;
     this->getStackRef().push_front(operand);
     return;
-  };
+};

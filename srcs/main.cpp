@@ -1,6 +1,6 @@
 #include "../includes/Avm.hpp"
-Factory *Factory::_factory = NULL;
 
+Factory *Factory::_factory = NULL;
 
 void checkArg( int ac, char **av) {
 
@@ -20,11 +20,23 @@ int     main(int ac, char **av)
     AbstractVm  abstractvm;
 
    	checkArg(ac, av);
-    abstractvm.create(INT8, "79");
-    abstractvm.print();
-    abstractvm.create(INT8, "12");
+    abstractvm.create(DOUBLE, "121.3");
+    abstractvm.create(INT8, "2");
+    abstractvm.create(FLOAT, "12.45");
+    abstractvm.create(FLOAT, "120.52");
+    abstractvm.create(INT16, "9");
+    abstractvm.create(INT32, "11");
     abstractvm.dump();
     abstractvm.sub();
+    abstractvm.dump();
+    abstractvm.mul();
+    abstractvm.dump();
+    abstractvm.add();
+    abstractvm.dump();
+    abstractvm.div();
+    abstractvm.dump();
+    abstractvm.mod();
+    abstractvm.dump();
     abstractvm.exit("End of program");
     return 0;
 }
