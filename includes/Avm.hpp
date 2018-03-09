@@ -23,6 +23,7 @@ enum eOperandType
     DOUBLE
 };
 
+# include "./AbstractVmException.class.hpp"
 # include "./IOperand.class.hpp"
 # include "./Factory.class.hpp"
 # include "./Operand.class.hpp"

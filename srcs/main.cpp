@@ -20,23 +20,21 @@ int     main(int ac, char **av)
     AbstractVm  abstractvm;
 
    	checkArg(ac, av);
-    abstractvm.create(DOUBLE, "121.3");
-    abstractvm.create(INT8, "2");
-    abstractvm.create(FLOAT, "12.45");
-    abstractvm.create(FLOAT, "120.52");
-    abstractvm.create(INT16, "9");
-    abstractvm.create(INT32, "11");
-    abstractvm.dump();
-    abstractvm.sub();
-    abstractvm.dump();
-    abstractvm.mul();
-    abstractvm.dump();
-    abstractvm.add();
-    abstractvm.dump();
-    abstractvm.div();
-    abstractvm.dump();
-    abstractvm.mod();
-    abstractvm.dump();
-    abstractvm.exit("End of program");
+   	try {
+   		abstractvm.create(INT32, "42");
+    	abstractvm.create(DOUBLE, "42.42");
+    	abstractvm.create(FLOAT, "0.42");
+     	abstractvm.dump();
+    	abstractvm.create(INT32, "33");
+    	abstractvm.pop();
+     	abstractvm.sub();
+     	abstractvm.sub();
+     	abstractvm.assert(DOUBLE, "2");
+     	abstractvm.div();
+     	abstractvm.dump();
+     	abstractvm.exit("End of program");
+   	} catch (AbstractVmException e) {
+   		abstractvm.exit(e.what());
+   	}
     return 0;
 }

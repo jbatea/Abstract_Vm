@@ -1,6 +1,7 @@
 NAME		=	avm
 
 SRC_NAME	=	main.cpp			\
+				AbstractVmException.class.cpp \
 				AbstractVm.class.cpp \
 				Factory.class.cpp \
 
