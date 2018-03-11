@@ -10,23 +10,20 @@ public:
     ~AbstractVm( void ); // Destructor
     AbstractVm & operator=( AbstractVm const & rhs );// Assignement
 
-    std::deque<const IOperand *> &          getStackRef( void ); // Stack getter
-    void                                    pop( void ) noexcept(false);
+    void                                    pop( unsigned long erase ) noexcept(false);
+    void									doOp(eOperator op) noexcept(false);
     void                                    dump( void );
     void                                    print( void ) noexcept(false);
     void                                    assert( eOperandType type, std::string const & value ) noexcept(false);
     void                                    exit( std::string const & error );
-    void                                    add( void ) noexcept(false);
-    void                                    sub( void ) noexcept(false);
-    void                                    mul( void ) noexcept(false);
-    void                                    div( void ) noexcept(false);
-    void                                    mod( void ) noexcept(false);
     void              						create( eOperandType type, std::string const & value );
 
 
 	private:
 
+    std::deque<const IOperand *> &          _getStackRef( void ); // Stack getter
 	const std::string						_getTypeAsString(eOperandType type) const;
+	const std::string						_getOpAsString(eOperator op) const;
 	void									_push( const IOperand *operand );
     std::deque<const IOperand *>            _stack;
 };

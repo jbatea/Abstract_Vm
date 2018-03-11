@@ -21,16 +21,9 @@ int     main(int ac, char **av)
 
    	checkArg(ac, av);
    	try {
-   		abstractvm.create(INT32, "42");
-    	abstractvm.create(DOUBLE, "42.42");
-    	abstractvm.create(FLOAT, "0.42");
-     	abstractvm.dump();
-    	abstractvm.create(INT32, "33");
-    	abstractvm.pop();
-     	abstractvm.sub();
-     	abstractvm.sub();
-     	abstractvm.assert(DOUBLE, "2");
-     	abstractvm.div();
+     	abstractvm.create(INT32, "2147483647");
+     	abstractvm.create(INT32, "2");
+     	abstractvm.doOp(MUL);
      	abstractvm.dump();
      	abstractvm.exit("End of program");
    	} catch (AbstractVmException e) {

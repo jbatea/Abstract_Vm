@@ -15,10 +15,10 @@ class Operand : public IOperand {
 		return;
 	}; // Copy constructor
 
-	Operand<T>(eOperandType type, std::string const & string) {
+	Operand<T>(eOperandType type, T value) {
 		this->_type = type;
-		this->_string = string;
-		this->_value = stof(string);
+		this->_string = toString((double)value);
+		this->_value = value;
 //		std::cout << "Create Operand:: value -> " <<  (int16_t)value
 //			<< " string -> " << this->_string << " type -> " << this->_type << std::endl;
 
@@ -33,34 +33,34 @@ class Operand : public IOperand {
 		if (this != &rhs) {
 			this->_type = rhs.getType();
 			this->_string = rhs.toString();
-			this->_value = stof(rhs.toString());
+			this->_value = stod(rhs.toString());
 		 }
 		 return *this;
 	 };
 
 	IOperand const *    operator+( IOperand const & rhs ) const {
    		return Factory::getFactory()->createOperand(getType(rhs),
-   			toString(this->_value + stof(rhs.toString())));
+   			toString(this->_value + stod(rhs.toString())));
 	}; // Sum
 
 	IOperand const *    operator-( IOperand const & rhs ) const {
 	return Factory::getFactory()->createOperand(getType(rhs),
-			toString(this->_value - stof(rhs.toString())));
+			toString(this->_value - stod(rhs.toString())));
 	}; // Difference
 
 	IOperand const *    operator*( IOperand const & rhs ) const {
        	return Factory::getFactory()->createOperand(getType(rhs),
-       		toString(this->_value * stof(rhs.toString())));
+       		toString(this->_value * stod(rhs.toString())));
 	}; // Product
 
 	IOperand const *    operator/( IOperand const & rhs ) const {
         return Factory::getFactory()->createOperand(getType(rhs),
-			toString(this->_value / stof(rhs.toString())));
+			toString(this->_value / stod(rhs.toString())));
 	}; // Quotient
 
 	IOperand const *    operator%( IOperand const & rhs ) const {
         return Factory::getFactory()->createOperand(getType(rhs),
-        	toString(fmod(this->_value, stof(rhs.toString()))));
+        	toString(fmod(this->_value, stod(rhs.toString()))));
 	}; // Modulo
 
 	int                 getPrecision(void) const {

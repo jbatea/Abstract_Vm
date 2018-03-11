@@ -13,6 +13,7 @@
 # include <math.h>
 # include <sstream>
 # include <string>
+# include <float.h>
 
 enum eOperandType
 {
@@ -22,6 +23,16 @@ enum eOperandType
     FLOAT,
     DOUBLE
 };
+
+enum eOperator
+{
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    MOD
+};
+
 
 # include "./AbstractVmException.class.hpp"
 # include "./IOperand.class.hpp"
