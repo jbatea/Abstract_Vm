@@ -21,9 +21,9 @@ int     main(int ac, char **av)
 
    	checkArg(ac, av);
    	try {
-     	abstractvm.create(INT32, "2147483647");
-     	abstractvm.create(INT32, "2");
-     	abstractvm.doOp(MUL);
+     	abstractvm.create(INT8, "2");
+     	abstractvm.create(INT8, "0");
+     	abstractvm.doOp(MOD);
      	abstractvm.dump();
      	abstractvm.exit("End of program");
    	} catch (AbstractVmException e) {

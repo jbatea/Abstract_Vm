@@ -24,15 +24,20 @@ enum eOperandType
     DOUBLE
 };
 
-enum eOperator
+enum eInstruction
 {
+	PUSH,
+	POP,
+	DUMP,
+	ASSERT,
     ADD,
     SUB,
     MUL,
     DIV,
-    MOD
+    MOD,
+    PRINT,
+    EXIT
 };
-
 
 # include "./AbstractVmException.class.hpp"
 # include "./IOperand.class.hpp"

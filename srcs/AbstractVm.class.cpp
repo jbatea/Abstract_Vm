@@ -31,19 +31,9 @@ std::deque<const IOperand *> & AbstractVm::_getStackRef( void ) {
     return this->_stack;
 }
 
-
-const std::string  AbstractVm::_getTypeAsString(eOperandType type) const {
-	const std::string typeList[] = {"INT8", "INT16", "INT32", "FLOAT", "DOUBLE"};
-	return typeList[type];
-}
-
-const std::string  AbstractVm::_getOpAsString(eOperator op) const {
-	const std::string opList[] = {"ADD", "SUB", "MUL", "DIV", "MOD"};
-	return opList[op];
-}
-
 void  AbstractVm::pop( unsigned long erase ) noexcept(false) {
-    if (this->_getStackRef().size() < erase) throw AbstractVmException("Pop:: Empty Stack");
+	if (erase == 1) this->_instruction = POP;
+    if (this->_getStackRef().size() < erase) throw AbstractVmException("Empty Stack");
     this->_getStackRef().erase(this->_getStackRef().begin(), this->_getStackRef().begin()+erase);
     return;
 }
@@ -51,6 +41,7 @@ void  AbstractVm::pop( unsigned long erase ) noexcept(false) {
 void  AbstractVm::dump( void ) {
     std::deque<const IOperand *>::iterator it = this->_getStackRef().begin();
 
+	this->_instruction = DUMP;
     std::cout << "Avm:: Dump: " << std::endl;
     while (it != this->_getStackRef().end())
         std::cout << (*it++)->toString() << std::endl;
@@ -58,40 +49,42 @@ void  AbstractVm::dump( void ) {
 }
 
 void AbstractVm::exit(std::string const & error) {
-    std::cout << error << std::endl;
+    std::cout << this->getInstruction() << "::" << error << std::endl;
     this->~AbstractVm();
     std::exit(0);
 }
 
 void AbstractVm::assert( eOperandType type, std::string const & value ) noexcept(false) {
 
-    if (this->_getStackRef().empty()) throw AbstractVmException("Assert:: Empty Stack");
+	this->_instruction = ASSERT;
+    if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
     if (this->_getStackRef()[0]->toString().compare(value))
-    	throw AbstractVmException("Assert:: Expected Value -> " + value + " Front Stack Value -> " + this->_getStackRef()[0]->toString());
+    	throw AbstractVmException("Expected Value -> " + value + " Front Stack Value -> " + this->_getStackRef()[0]->toString());
     if (this->_getStackRef()[0]->getType() != type)
-		throw AbstractVmException("Assert:: Expected Type -> "  + this->_getTypeAsString(type) +
-			" Front Stack Type -> " + this->_getTypeAsString(this->_getStackRef()[0]->getType()));
-    std::cout << "Assert::Success:: Type -> " << this->_getTypeAsString(type) << " Value -> " << value << std::endl;
+		throw AbstractVmException(this->_getStackRef()[0]->getType(), "Type");
+    std::cout << "Assert::Success:: Value -> " << value << std::endl;
     return;
 }
 
 void AbstractVm::print( void ) noexcept(false) {
 
-    if (this->_getStackRef().empty()) throw AbstractVmException("Print:: Empty Stack");
-    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("Print:: Not a 8bit integer");
-    std::cout << "Avm:: Print: " <<  static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << std::endl;
+	this->_instruction = PRINT;
+    if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
+    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("Not a 8bit integer");
+    std::cout << "Print: " <<  static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << std::endl;
     return;
 }
 
-void				AbstractVm::doOp(eOperator op) noexcept(false) {
+void				AbstractVm::doOp(eInstruction op) noexcept(false) {
  	const IOperand         *v1;
     const IOperand         *v2;
     const IOperand         *result;
 
+	this->_instruction = op;
  	if (this->_getStackRef().size() < 2)
- 		throw AbstractVmException(this->_getOpAsString(op) + ":: Missing operands");
+ 		throw AbstractVmException("Missing operands");
  	if ((op == DIV || op == MOD) && !this->_getStackRef()[0]->toString().compare("0"))
- 		throw AbstractVmException(this->_getOpAsString(op) + ":: Right Operand is 0");
+ 		throw AbstractVmException("Right Operand is 0");
     v1 = this->_getStackRef()[0];
     v2 = this->_getStackRef()[1];
     this->pop(2);
@@ -101,6 +94,7 @@ void				AbstractVm::doOp(eOperator op) noexcept(false) {
     	case MUL: result = *v2 * *v1; break;
     	case DIV: result = *v2 / *v1; break;
     	case MOD: result = *v2 % *v1; break;
+    	default: break;
     }
     this->_push(result);
     return;
@@ -108,6 +102,7 @@ void				AbstractVm::doOp(eOperator op) noexcept(false) {
 
 
 void  AbstractVm::create( eOperandType type, std::string const & value ) noexcept(false) {
+	this->_instruction = PUSH;
     this->_push(Factory::getFactory()->createOperand(type, value));
     return;
 };
@@ -117,3 +112,8 @@ void  AbstractVm::_push( const IOperand *operand ) {
     this->_getStackRef().push_front(operand);
     return;
 };
+
+const std::string  AbstractVm::getInstruction() const {
+	const std::string instructionList[] = {"PUSH", "POP", "DUMP", "ASSERT", "ADD", "SUB", "MUL", "DIV", "MOD", "PRINT", "EXIT"};
+	return instructionList[this->_instruction];
+}

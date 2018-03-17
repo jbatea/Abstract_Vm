@@ -7,6 +7,7 @@ class AbstractVmException : public std::exception {
 
 	AbstractVmException( void );
 	AbstractVmException(std::string const & exception);
+	AbstractVmException(eOperandType type, std::string const & exception);
 	AbstractVmException(AbstractVmException const & src);
 	~AbstractVmException( void );
 	AbstractVmException & operator=( AbstractVmException const & rhs );
@@ -14,7 +15,8 @@ class AbstractVmException : public std::exception {
 
 	 private:
 
-	 std::string _exception;
+	const std::string						_getTypeAsString(eOperandType type) const;
+	std::string _exception;
 };
 
 #endif
