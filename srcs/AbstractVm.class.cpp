@@ -117,3 +117,56 @@ const std::string  AbstractVm::getInstruction() const {
 	const std::string instructionList[] = {"PUSH", "POP", "DUMP", "ASSERT", "ADD", "SUB", "MUL", "DIV", "MOD", "PRINT", "EXIT"};
 	return instructionList[this->_instruction];
 }
+
+void AbstractVm::printLexemes() {
+    std::deque<const Lexeme *>::iterator it = this->_getLexemes().begin();
+    std::cout << "Lexemes :" << std::endl;
+    while (it != this->_getLexemes().end()) {
+        std::cout << "Value -> " << (*it)->getValue() << " Category -> " << (*it)->getCategory() << std::endl;
+        *it++;
+    }
+    return;
+}
+
+std::deque<const Lexeme *> & AbstractVm::_getLexemes(void) {
+	return this->_lines;
+}
+
+void AbstractVm::_addLexeme(std::string const & lexeme, eCategory category) {
+	this->_getLexemes().push_back(new Lexeme(lexeme, category));
+	return;
+}
+
+void AbstractVm::_lexer(std::string const & line) {
+	std::istringstream stream(line);
+	std::string _lexeme;
+
+	while (std::getline(stream, _lexeme, ' ')) this->_addLexeme(_lexeme, INSTR);
+	this->_addLexeme("/n", SEP);
+	return;
+}
+
+void AbstractVm::_getFile(char *av) noexcept(false) {
+	std::string		line;
+	std::ifstream	file;
+
+	file.open(av, std::ifstream::in);
+	if (!file.is_open()) throw AbstractVmException("Failed to open file");
+	while (std::getline(file, line)) this->_lexer(line);
+	file.close();
+	return;
+}
+
+void AbstractVm::_getInput(void) noexcept(false) {
+	std::string		line;
+	while (std::getline(std::cin, line) && line.compare(";;")) this->_lexer(line);
+	return;
+}
+
+void AbstractVm::checkArg(int ac, char **av) noexcept(false) {
+	this->_instruction = PUSH;
+	if (ac > 2) throw AbstractVmException("Too much arguments, Usage: ./avm Or ./avm ./sample.avm");
+   	(ac == 2) ? this->_getFile(av[1]) : this->_getInput();
+   	this->printLexemes();
+    return;
+}

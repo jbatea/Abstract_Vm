@@ -12,6 +12,7 @@
 # include <functional>
 # include <math.h>
 # include <sstream>
+# include <fstream>
 # include <string>
 # include <float.h>
 
@@ -39,10 +40,18 @@ enum eInstruction
     EXIT
 };
 
+enum eCategory {
+	INSTR,
+	VALUE,
+	SEP,
+	COM
+};
+
 # include "./AbstractVmException.class.hpp"
 # include "./IOperand.class.hpp"
 # include "./Factory.class.hpp"
 # include "./Operand.class.hpp"
+# include "./Lexeme.class.hpp"
 # include "./AbstractVm.class.hpp"
 
 #endif
