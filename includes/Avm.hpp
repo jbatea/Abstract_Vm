@@ -15,6 +15,8 @@
 # include <fstream>
 # include <string>
 # include <float.h>
+# include <vector>
+# include <regex>
 
 enum eOperandType
 {
@@ -52,6 +54,7 @@ enum eCategory {
 # include "./Factory.class.hpp"
 # include "./Operand.class.hpp"
 # include "./Lexeme.class.hpp"
+# include "./Lexer.class.hpp"
 # include "./AbstractVm.class.hpp"
 
 #endif

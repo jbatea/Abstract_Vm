@@ -32,7 +32,7 @@ std::deque<const IOperand *> & AbstractVm::_getStackRef( void ) {
 }
 
 void  AbstractVm::pop( unsigned long erase ) noexcept(false) {
-	if (erase == 1) this->_instruction = POP;
+	if (erase == 1) this->getLexer().setInstruction(POP);
     if (this->_getStackRef().size() < erase) throw AbstractVmException("Empty Stack");
     this->_getStackRef().erase(this->_getStackRef().begin(), this->_getStackRef().begin()+erase);
     return;
@@ -41,7 +41,7 @@ void  AbstractVm::pop( unsigned long erase ) noexcept(false) {
 void  AbstractVm::dump( void ) {
     std::deque<const IOperand *>::iterator it = this->_getStackRef().begin();
 
-	this->_instruction = DUMP;
+	this->getLexer().setInstruction(DUMP);
     std::cout << "Avm:: Dump: " << std::endl;
     while (it != this->_getStackRef().end())
         std::cout << (*it++)->toString() << std::endl;
@@ -49,14 +49,14 @@ void  AbstractVm::dump( void ) {
 }
 
 void AbstractVm::exit(std::string const & error) {
-    std::cout << this->getInstruction() << "::" << error << std::endl;
+    std::cout << this->getLexer().getInstruction() << "::" << error << std::endl;
     this->~AbstractVm();
     std::exit(0);
 }
 
 void AbstractVm::assert( eOperandType type, std::string const & value ) noexcept(false) {
 
-	this->_instruction = ASSERT;
+	this->getLexer().setInstruction(ASSERT);
     if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
     if (this->_getStackRef()[0]->toString().compare(value))
     	throw AbstractVmException("Expected Value -> " + value + " Front Stack Value -> " + this->_getStackRef()[0]->toString());
@@ -68,7 +68,7 @@ void AbstractVm::assert( eOperandType type, std::string const & value ) noexcept
 
 void AbstractVm::print( void ) noexcept(false) {
 
-	this->_instruction = PRINT;
+	this->getLexer().setInstruction(PRINT);
     if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
     if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("Not a 8bit integer");
     std::cout << "Print: " <<  static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << std::endl;
@@ -80,7 +80,7 @@ void				AbstractVm::doOp(eInstruction op) noexcept(false) {
     const IOperand         *v2;
     const IOperand         *result;
 
-	this->_instruction = op;
+	this->getLexer().setInstruction(op);
  	if (this->_getStackRef().size() < 2)
  		throw AbstractVmException("Missing operands");
  	if ((op == DIV || op == MOD) && !this->_getStackRef()[0]->toString().compare("0"))
@@ -102,7 +102,7 @@ void				AbstractVm::doOp(eInstruction op) noexcept(false) {
 
 
 void  AbstractVm::create( eOperandType type, std::string const & value ) noexcept(false) {
-	this->_instruction = PUSH;
+	this->getLexer().setInstruction(PUSH);
     this->_push(Factory::getFactory()->createOperand(type, value));
     return;
 };
@@ -113,60 +113,6 @@ void  AbstractVm::_push( const IOperand *operand ) {
     return;
 };
 
-const std::string  AbstractVm::getInstruction() const {
-	const std::string instructionList[] = {"PUSH", "POP", "DUMP", "ASSERT", "ADD", "SUB", "MUL", "DIV", "MOD", "PRINT", "EXIT"};
-	return instructionList[this->_instruction];
-}
-
-void AbstractVm::printLexemes() {
-    std::deque<const Lexeme *>::iterator it = this->_getLexemes().begin();
-    std::cout << "Lexemes :" << std::endl;
-    while (it != this->_getLexemes().end()) {
-        std::cout << "Value -> " << (*it)->getValue() << " Category -> " << (*it)->getCategory() << std::endl;
-        *it++;
-    }
-    return;
-}
-
-std::deque<const Lexeme *> & AbstractVm::_getLexemes(void) {
-	return this->_lines;
-}
-
-void AbstractVm::_addLexeme(std::string const & lexeme, eCategory category) {
-	this->_getLexemes().push_back(new Lexeme(lexeme, category));
-	return;
-}
-
-void AbstractVm::_lexer(std::string const & line) {
-	std::istringstream stream(line);
-	std::string _lexeme;
-
-	while (std::getline(stream, _lexeme, ' ')) this->_addLexeme(_lexeme, INSTR);
-	this->_addLexeme("/n", SEP);
-	return;
-}
-
-void AbstractVm::_getFile(char *av) noexcept(false) {
-	std::string		line;
-	std::ifstream	file;
-
-	file.open(av, std::ifstream::in);
-	if (!file.is_open()) throw AbstractVmException("Failed to open file");
-	while (std::getline(file, line)) this->_lexer(line);
-	file.close();
-	return;
-}
-
-void AbstractVm::_getInput(void) noexcept(false) {
-	std::string		line;
-	while (std::getline(std::cin, line) && line.compare(";;")) this->_lexer(line);
-	return;
-}
-
-void AbstractVm::checkArg(int ac, char **av) noexcept(false) {
-	this->_instruction = PUSH;
-	if (ac > 2) throw AbstractVmException("Too much arguments, Usage: ./avm Or ./avm ./sample.avm");
-   	(ac == 2) ? this->_getFile(av[1]) : this->_getInput();
-   	this->printLexemes();
-    return;
+Lexer & AbstractVm::getLexer(){
+	return this->_lexer;
 }

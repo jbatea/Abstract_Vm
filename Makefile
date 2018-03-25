@@ -4,6 +4,7 @@ SRC_NAME	=	main.cpp			\
 				AbstractVmException.class.cpp \
 				AbstractVm.class.cpp \
 				Factory.class.cpp \
+				Lexer.class.cpp \
 				Lexeme.class.cpp
 
 SRC		=	$(addprefix srcs/, $(SRC_NAME))
