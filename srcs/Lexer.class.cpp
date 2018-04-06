@@ -32,8 +32,6 @@ void				Lexer::setInstruction(eInstruction instruction) {
 	this->_instruction = instruction;
 }
 
-
-
 std::deque<const Lexeme *> & Lexer::getLexemes(void) {
 	return this->_lines;
 }

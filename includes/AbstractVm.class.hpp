@@ -14,15 +14,15 @@ public:
     void									doOp(eInstruction op) noexcept(false);
     void                                    dump( void );
     void                                    print( void ) noexcept(false);
-    void                                    assert( eOperandType type, std::string const & value ) noexcept(false);
+    void                                    assert( std::string const & value ) noexcept(false);
     void                                    exit( std::string const & error );
-    void              						create( eOperandType type, std::string const & value );
+    void              						create( std::string const & value );
 	Lexer &									getLexer();
-	void									printLexemes( void );
+	void									parseLexemes( void );
 
 	private:
 
-	void									_parse(const Lexeme * lexeme);
+	void                                    _doInstr(eInstruction instr, std::string value);
     std::deque<const IOperand *> &          _getStackRef( void ); // Stack getter
 	void									_push( const IOperand *operand );
     std::deque<const IOperand *>            _stack;

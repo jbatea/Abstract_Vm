@@ -8,6 +8,7 @@ Lexeme::Lexeme( void ) {
 Lexeme::Lexeme( std::string const & value, eCategory category) {
 	this->_value = value;
 	this->_category = category;
+	this->_setInstruction();
     return;
 }
 
@@ -30,9 +31,22 @@ Lexeme & Lexeme::operator=( Lexeme const & rhs) {
     return *this;
 }
 
+eInstruction Lexeme::getInstruction() const {
+	return this->_instruction;
+}
+
 std::string const Lexeme::getCategory() const {
 	const std::string lexemeList[] = {"INSTR", "VALUE", "SEP", "COM"};
     return lexemeList[this->_category];
+}
+
+void Lexeme::_setInstruction(void) {
+	std::map<std::string, eInstruction> instructions {{"push", PUSH}, {"pop", POP}, {"dump", DUMP}, {"assert", ASSERT}, {"add", ADD}, {"sub", SUB}, {"mul", MUL}, {"div", DIV}, {"mod", MOD}, {"print", PRINT}, {"exit", EXIT}};
+
+	if (this->getCategory() != "INSTR") return;
+	std::map<std::string, eInstruction>::iterator it = instructions.find(this->_value);
+	this->_instruction = it->second;
+	return;
 }
 
 void Lexeme::setCategory(eCategory category) {

@@ -21,7 +21,6 @@ AbstractVm::~AbstractVm( void ) {
 
 // Assignement
 AbstractVm & AbstractVm::operator=( AbstractVm const & rhs) {
-
     if (this != &rhs)
         *this = rhs;
     return *this;
@@ -54,15 +53,17 @@ void AbstractVm::exit(std::string const & error) {
     std::exit(0);
 }
 
-void AbstractVm::assert( eOperandType type, std::string const & value ) noexcept(false) {
+void AbstractVm::assert(std::string const & value ) noexcept(false) {
+	std::smatch match;
+	std::regex_search(value, match, std::regex("\\(\\d*(.\\d*)?\\)"));
 
 	this->getLexer().setInstruction(ASSERT);
     if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
-    if (this->_getStackRef()[0]->toString().compare(value))
+    if (this->_getStackRef()[0]->toString().compare(match.str().substr(1, match.size())))
     	throw AbstractVmException("Expected Value -> " + value + " Front Stack Value -> " + this->_getStackRef()[0]->toString());
-    if (this->_getStackRef()[0]->getType() != type)
+    if (this->_getStackRef()[0]->getType() != INT8)
 		throw AbstractVmException(this->_getStackRef()[0]->getType(), "Type");
-    std::cout << "Assert::Success:: Value -> " << value << std::endl;
+    std::cout << "Assert::Success:: Value -> " << match.str().substr(1, match.size()) << std::endl;
     return;
 }
 
@@ -100,10 +101,35 @@ void				AbstractVm::doOp(eInstruction op) noexcept(false) {
     return;
 }
 
+void            AbstractVm::_doInstr(eInstruction instr, std::string value) {
+	switch (instr) {
+		case ADD:
+		case SUB:
+		case MUL:
+		case DIV:
+		case MOD:
+			this->doOp(instr); break;
+		case EXIT: this->exit("Instr exit was called"); break;
+		case PRINT: this->print(); break;
+		case ASSERT: this->assert(value); break;
+		case PUSH: this->create(value); break;
+		case POP: this->pop(1); break;
+		case DUMP: this->dump(); break;
+		default: break;
+	}
+	return;
+}
 
-void  AbstractVm::create( eOperandType type, std::string const & value ) noexcept(false) {
+void  AbstractVm::create(std::string const & value ) noexcept(false) {
+//	eOperandType type;
+	std::smatch match;
+	std::map<std::string, eOperandType> types {{"int8", INT8}, {"int16", INT16}, {"int32", INT32}, {"float", FLOAT}, {"double", DOUBLE}};
+
+
+	std::regex_search(value, match, std::regex("\\(\\d*(.\\d*)?\\)"));
 	this->getLexer().setInstruction(PUSH);
-    this->_push(Factory::getFactory()->createOperand(type, value));
+    this->_push(Factory::getFactory()->createOperand(INT8, match.str().substr(1, match.size())));
+      std::cout << "PUSH -> " << match.str().substr(1, match.size()) << std::endl;
     return;
 };
 
@@ -113,27 +139,20 @@ void  AbstractVm::_push( const IOperand *operand ) {
     return;
 };
 
-void AbstractVm::printLexemes() {
+void AbstractVm::parseLexemes() {
     std::deque<const Lexeme *>::iterator it = this->getLexer().getLexemes().begin();
+    eInstruction instr;
+
     while (it != this->getLexer().getLexemes().end()) {
-		if ((*it)->getCategory() == "SEP") std::cout << std::endl;
-        else std::cout << "{cat:" << (*it)->getCategory() << ",val:" << (*it)->getValue() << "}";
-         this->_parse(*it);
-        *it++;
+        if ((*it)->getCategory() == "INSTR" && std::regex_match((*it)->getValue(), std::regex("(push|assert)"))) {
+            instr = (*it)->getInstruction();
+            *it++;
+            this->_doInstr(instr, (*it)->getValue());
+        }
+        else this->_doInstr((*it)->getInstruction(), NULL);
+        if (it != this->getLexer().getLexemes().end()) *it++;
     }
     return;
-}
-
-void	AbstractVm::_parse(const Lexeme * lexeme) {
-	typedef void (AbstractVm::*op)(void);
-		op a[] = {
-//			&AbstractVm::pop,
-			&AbstractVm::print,
-			&AbstractVm::dump,
-//			&AbstractVm::exit
-		 };
-		 (void)lexeme;
-		 (this->*a[0])();
 }
 
 Lexer & AbstractVm::getLexer(){

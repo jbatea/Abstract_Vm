@@ -1,11 +1,3 @@
 push int32(42)
-push int32(33)
-add
-push float(44.55)
-;
-; this is a   comment
-mul
-dump
-pop
-;DDS sjlkdj
+assert int32(42)
 exit

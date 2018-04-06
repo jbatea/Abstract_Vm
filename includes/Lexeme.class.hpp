@@ -14,10 +14,13 @@ class Lexeme {
         void		setCategory(eCategory category);
         std::string const & getValue() const;
         void		setValue(std::string const & value);
+        eInstruction    getInstruction() const;
 
     private:
+		void            _setInstruction( void );
 		eCategory 		_category;
 		std::string		_value;
+		eInstruction    _instruction;
 };
 
 #endif
