@@ -113,6 +113,29 @@ void  AbstractVm::_push( const IOperand *operand ) {
     return;
 };
 
+void AbstractVm::printLexemes() {
+    std::deque<const Lexeme *>::iterator it = this->getLexer().getLexemes().begin();
+    while (it != this->getLexer().getLexemes().end()) {
+		if ((*it)->getCategory() == "SEP") std::cout << std::endl;
+        else std::cout << "{cat:" << (*it)->getCategory() << ",val:" << (*it)->getValue() << "}";
+         this->_parse(*it);
+        *it++;
+    }
+    return;
+}
+
+void	AbstractVm::_parse(const Lexeme * lexeme) {
+	typedef void (AbstractVm::*op)(void);
+		op a[] = {
+//			&AbstractVm::pop,
+			&AbstractVm::print,
+			&AbstractVm::dump,
+//			&AbstractVm::exit
+		 };
+		 (void)lexeme;
+		 (this->*a[0])();
+}
+
 Lexer & AbstractVm::getLexer(){
 	return this->_lexer;
 }

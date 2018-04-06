@@ -18,12 +18,13 @@ public:
     void                                    exit( std::string const & error );
     void              						create( eOperandType type, std::string const & value );
 	Lexer &									getLexer();
+	void									printLexemes( void );
 
 	private:
 
+	void									_parse(const Lexeme * lexeme);
     std::deque<const IOperand *> &          _getStackRef( void ); // Stack getter
 	void									_push( const IOperand *operand );
-
     std::deque<const IOperand *>            _stack;
     Lexer									_lexer;
 };

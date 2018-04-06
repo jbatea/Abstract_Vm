@@ -32,22 +32,14 @@ void				Lexer::setInstruction(eInstruction instruction) {
 	this->_instruction = instruction;
 }
 
-void Lexer::printLexemes() {
-    std::deque<const Lexeme *>::iterator it = this->_getLexemes().begin();
-    while (it != this->_getLexemes().end()) {
-		if ((*it)->getCategory() == "SEP") std::cout << std::endl;
-        else std::cout << "{cat:" << (*it)->getCategory() << ",val:" << (*it)->getValue() << "}";
-        *it++;
-    }
-    return;
-}
 
-std::deque<const Lexeme *> & Lexer::_getLexemes(void) {
+
+std::deque<const Lexeme *> & Lexer::getLexemes(void) {
 	return this->_lines;
 }
 
 void Lexer::_addLexeme(std::string const & lexeme, eCategory category) {
-	this->_getLexemes().push_back(new Lexeme(lexeme, category));
+	this->getLexemes().push_back(new Lexeme(lexeme, category));
 	return;
 }
 
@@ -64,7 +56,7 @@ void Lexer::_lexer(std::string const & line) noexcept(false) {
 	std::regex e ("^((pop|dump|add|sub|mul|div|mod|print|exit)|((assert|push) (((int(8|16|32)\\(-?\\d+\\)))|((float|double)\\(-?\\d+[.]\\d+\\)))))?(\\s*;.*)?$");
 
 	if (!std::regex_match(line, e)) throw AbstractVmException("Lexer:: Invalid line format -> " + line);
-	std::regex_replace(std::back_inserter(res), line.begin(), line.end(), std::regex(".*;.*$"), "$2");
+	std::regex_replace(std::back_inserter(res), line.begin(), line.end(), std::regex(".*;.*$"), "$`");
 	stream.str(res);
 	while (std::getline(stream, _lexeme, ' ')) this->_addLexeme(_lexeme, this->_getLexemeCategory(_lexeme));
 	if (res != "") this->_addLexeme("\\n", SEP);
@@ -88,14 +80,14 @@ void Lexer::_getInput(void) noexcept(false) {
 	return;
 }
 
-void Lexer::checkArg(int ac, char **av) noexcept(false) {
+void Lexer::getArg(int ac, char **av) noexcept(false) {
    	std::deque<const Lexeme *>::iterator it;
 	this->_instruction = POP;
 
 	if (ac > 2) throw AbstractVmException("Lexer:: Too much arguments, Usage: ./avm Or ./avm ./sample.avm");
    	(ac == 2) ? this->_getFile(av[1]) : this->_getInput();
-    it = this->_getLexemes().begin();
-    while (it != this->_getLexemes().end()) {
+    it = this->getLexemes().begin();
+    while (it != this->getLexemes().end()) {
         if ((*it)->getValue() == "exit") return;
         *it++;
     }

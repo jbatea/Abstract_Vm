@@ -7,8 +7,8 @@ int     main(int ac, char **av)
     AbstractVm  abstractvm;
 
    	try {
-     	abstractvm.getLexer().checkArg(ac, av);
-     	abstractvm.getLexer().printLexemes();
+     	abstractvm.getLexer().getArg(ac, av);
+     	abstractvm.printLexemes();
      	abstractvm.exit("End of program");
    	} catch (AbstractVmException e) {
    		abstractvm.exit(e.what());
