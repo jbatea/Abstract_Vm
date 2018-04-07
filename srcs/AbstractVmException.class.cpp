@@ -16,7 +16,7 @@ AbstractVmException::AbstractVmException(std::string const & exception) {
 }
 
 AbstractVmException::AbstractVmException(eOperandType type, std::string const & exception) {
-	this->_exception = this->_getTypeAsString(type) + exception;
+	this->_exception = exception + this->_getTypeAsString(type);
 	return;
 }
 
@@ -39,5 +39,3 @@ const std::string  AbstractVmException::_getTypeAsString(eOperandType type) cons
 	const std::string typeList[] = {"INT8", "INT16", "INT32", "FLOAT", "DOUBLE"};
 	return typeList[type];
 }
-
-

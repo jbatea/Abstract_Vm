@@ -1,3 +1,8 @@
-push int32(42)
-assert int32(42)
+push double(2.25)
+mul
+push int8(17)
+push int32(2)
+push int32(2)
+dump
+push int32(2)
 exit

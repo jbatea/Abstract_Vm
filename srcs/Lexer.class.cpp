@@ -86,7 +86,7 @@ void Lexer::getArg(int ac, char **av) noexcept(false) {
    	(ac == 2) ? this->_getFile(av[1]) : this->_getInput();
     it = this->getLexemes().begin();
     while (it != this->getLexemes().end()) {
-        if ((*it)->getValue() == "exit") return;
+        if (!(*it)->getValue().compare("exit")) return;
         *it++;
     }
     throw AbstractVmException("Lexer:: Program doesn't have exit instruction");
