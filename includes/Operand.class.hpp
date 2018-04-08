@@ -17,11 +17,8 @@ class Operand : public IOperand {
 
 	Operand<T>(eOperandType type, T value) {
 		this->_type = type;
-		this->_string = toString((double)value);
+		this->_string = std::to_string(value);
 		this->_value = value;
-//		std::cout << "Create Operand:: value -> " <<  (int16_t)value
-//			<< " string -> " << this->_string << " type -> " << this->_type << std::endl;
-
 		return;
 	}
 
@@ -33,34 +30,34 @@ class Operand : public IOperand {
 		if (this != &rhs) {
 			this->_type = rhs.getType();
 			this->_string = rhs.toString();
-			this->_value = stod(rhs.toString());
+			this->_value = stold(rhs.toString());
 		 }
 		 return *this;
 	 };
 
 	IOperand const *    operator+( IOperand const & rhs ) const {
    		return Factory::getFactory()->createOperand(getType(rhs),
-   			toString(this->_value + stod(rhs.toString())));
+   			std::to_string(this->_value + stold(rhs.toString())));
 	}; // Sum
 
 	IOperand const *    operator-( IOperand const & rhs ) const {
 	return Factory::getFactory()->createOperand(getType(rhs),
-			toString(this->_value - stod(rhs.toString())));
+			std::to_string(this->_value - stold(rhs.toString())));
 	}; // Difference
 
 	IOperand const *    operator*( IOperand const & rhs ) const {
        	return Factory::getFactory()->createOperand(getType(rhs),
-       		toString(this->_value * stod(rhs.toString())));
+       		std::to_string(this->_value * stold(rhs.toString())));
 	}; // Product
 
 	IOperand const *    operator/( IOperand const & rhs ) const {
         return Factory::getFactory()->createOperand(getType(rhs),
-			toString(this->_value / stod(rhs.toString())));
+			std::to_string(this->_value / stold(rhs.toString())));
 	}; // Quotient
 
 	IOperand const *    operator%( IOperand const & rhs ) const {
         return Factory::getFactory()->createOperand(getType(rhs),
-        	toString(fmod(this->_value, stod(rhs.toString()))));
+        	std::to_string(fmod(this->_value, stold(rhs.toString()))));
 	}; // Modulo
 
 	int                 getPrecision(void) const {
@@ -79,14 +76,6 @@ class Operand : public IOperand {
 	std::string const & toString( void ) const {
 		return this->_string;
 	}; // String representation of value
-
-	std::string const toString(double value) const {
-        std::ostringstream str;
-        str << value;
-        std::string string = str.str();
-        return string;
-    }
-
 
 	private:
 

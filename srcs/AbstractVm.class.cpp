@@ -30,23 +30,22 @@ std::deque<const IOperand *> & AbstractVm::_getStackRef( void ) {
     return this->_stack;
 }
 
-void  AbstractVm::pop( unsigned long erase ) noexcept(false) {
-    if (this->_getStackRef().size() < erase) throw AbstractVmException("Empty Stack");
-    this->_getStackRef().erase(this->_getStackRef().begin(), this->_getStackRef().begin()+erase);
+void  AbstractVm::pop( void ) noexcept(false) {
+    if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
+    this->_getStackRef().pop_front();
     return;
 }
 
 void  AbstractVm::dump( void ) {
     std::deque<const IOperand *>::iterator it = this->_getStackRef().begin();
 
-    std::cout << "Avm:: Dump: " << std::endl;
     while (it != this->_getStackRef().end())
         std::cout << (*it++)->toString() << std::endl;
     return;
 }
 
 void AbstractVm::exit(std::string const & error) {
-    std::cout << this->getLexer().getInstruction() << "::" << error << std::endl;
+    std::cout << "Exit::"<< error << std::endl;
     this->~AbstractVm();
     std::exit(0);
 }
@@ -80,7 +79,7 @@ void				AbstractVm::_doOp(eInstruction op) noexcept(false) {
  		throw AbstractVmException("Right Operand is 0");
     v1 = this->_getStackRef()[0];
     v2 = this->_getStackRef()[1];
-    this->pop(2);
+    this->_getStackRef().erase(this->_getStackRef().begin(), this->_getStackRef().begin()+2);
     switch (op) {
     	case ADD: result = *v2 + *v1; break;
     	case SUB: result = *v2 - *v1; break;
@@ -94,14 +93,13 @@ void				AbstractVm::_doOp(eInstruction op) noexcept(false) {
 }
 
 void            AbstractVm::_doInstr(eInstruction instr, std::string value) {
-	this->getLexer().setInstruction(instr);
 	switch (instr) {
 		case ADD: case SUB: case MUL: case DIV: case MOD: this->_doOp(instr); break;
-		case EXIT: this->exit("Exit instruction was called"); break;
+		case EXIT: this->exit("End Of Program"); break;
 		case PRINT: this->print(); break;
 		case ASSERT: this->assert(this->_parseType(value), this->_parseValue(value)); break;
 		case PUSH: this->create(this->_parseType(value), this->_parseValue(value)); break;
-		case POP: this->pop(1); break;
+		case POP: this->pop(); break;
 		case DUMP: this->dump(); break;
 		default: break;
 	}
@@ -115,7 +113,7 @@ void  AbstractVm::create(eOperandType type, std::string const & value ) noexcept
 
 std::string AbstractVm::_parseValue(std::string const & value) {
 	std::smatch match;
-	std::regex_search(value, match, std::regex("\\(\\d*(.\\d*)?\\)"));
+	std::regex_search(value, match, std::regex("\\(-?\\d*(.\\d*)?\\)"));
 	return match.str().substr(1, match.length() - 2);
 }
 
@@ -136,7 +134,7 @@ void AbstractVm::parseLexemes() {
     std::deque<const Lexeme *>::iterator it = this->getLexer().getLexemes().begin();
 
     while (it != this->getLexer().getLexemes().end()) {
-        if (!(*it)->getCategory().compare("INSTR")) {
+        if ((*it)->getCategory() == INSTR) {
         	std::regex_match((*it)->getValue(), std::regex("(push|assert)")) ?
             this->_doInstr((*it)->getInstruction(), (*(it + 1))->getValue()) :
             this->_doInstr((*it)->getInstruction(), "");

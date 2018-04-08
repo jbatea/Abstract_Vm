@@ -24,21 +24,8 @@ Lexer & Lexer::operator=( Lexer const & rhs) {
     return *this;
 }
 
-eInstruction Lexer::getInstruction() {
-	return this->_instruction;
-}
-
-void				Lexer::setInstruction(eInstruction instruction) {
-	this->_instruction = instruction;
-}
-
 std::deque<const Lexeme *> & Lexer::getLexemes(void) {
 	return this->_lines;
-}
-
-void Lexer::_addLexeme(std::string const & lexeme, eCategory category) {
-	this->getLexemes().push_back(new Lexeme(lexeme, category));
-	return;
 }
 
 eCategory				Lexer::_getLexemeCategory(std::string const & _lexeme) {
@@ -56,8 +43,8 @@ void Lexer::_lexer(std::string const & line) noexcept(false) {
 	if (!std::regex_match(line, e)) throw AbstractVmException("Lexer:: Invalid line format -> " + line);
 	std::regex_replace(std::back_inserter(res), line.begin(), line.end(), std::regex(".*;.*$"), "$`");
 	stream.str(res);
-	while (std::getline(stream, _lexeme, ' ')) this->_addLexeme(_lexeme, this->_getLexemeCategory(_lexeme));
-	if (res != "") this->_addLexeme("\\n", SEP);
+	while (std::getline(stream, _lexeme, ' '))
+		this->getLexemes().push_back(new Lexeme(_lexeme, this->_getLexemeCategory(_lexeme)));
 	return;
 }
 
@@ -80,7 +67,6 @@ void Lexer::_getInput(void) noexcept(false) {
 
 void Lexer::getArg(int ac, char **av) noexcept(false) {
    	std::deque<const Lexeme *>::iterator it;
-	this->_instruction = POP;
 
 	if (ac > 2) throw AbstractVmException("Lexer:: Too much arguments, Usage: ./avm Or ./avm ./sample.avm");
    	(ac == 2) ? this->_getFile(av[1]) : this->_getInput();

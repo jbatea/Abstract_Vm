@@ -77,8 +77,7 @@
 		long double min;
 		long double max;
 
-        try {
-        	_value = stold(value);
+        try { _value = stold(value);
         } catch (std::out_of_range e) {
         	throw AbstractVmException(type, "::OUT_OF_RANGE Value -> " + value);
         }
@@ -86,8 +85,9 @@
         	case INT8: min = INT8_MIN; max = INT8_MAX; break;
         	case INT16: min = INT16_MIN; max = INT16_MAX; break;
         	case INT32: min = INT32_MIN; max = INT32_MAX; break;
-        	case FLOAT: min = FLT_MIN; max = FLT_MAX; break;
-        	case DOUBLE: min = DBL_MIN; max = DBL_MAX; break;
+        	case FLOAT: min = std::numeric_limits<float>::lowest(); max = FLT_MAX; break;
+        	case DOUBLE: min = std::numeric_limits<double>::lowest(); max = DBL_MAX; break;
+        	default: break;
         }
 		if (_value < min) throw AbstractVmException(type, "::UNDERFLOW Value -> " + value);
 		if (_value > max) throw AbstractVmException(type, "::OVERFLOW Value -> " + value);

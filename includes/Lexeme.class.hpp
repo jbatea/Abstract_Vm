@@ -6,21 +6,19 @@ class Lexeme {
 	public:
     
         Lexeme( void ); // Default constructor
-        Lexeme( std::string const & value, eCategory category); // Default constructor
+        Lexeme( std::string const & value, eCategory category); // Constructor
         Lexeme( Lexeme const & src ); // Copy constructor
         ~Lexeme( void ); // Destructor
         Lexeme & operator=( Lexeme const & rhs );// Assignement
-        std::string const getCategory() const;
-        void		setCategory(eCategory category);
+
+        eCategory           getCategory() const;
         std::string const & getValue() const;
-        void		setValue(std::string const & value);
-        eInstruction    getInstruction() const;
+        eInstruction        getInstruction() const;
 
     private:
-		void            _setInstruction( void );
+
 		eCategory 		_category;
 		std::string		_value;
-		eInstruction    _instruction;
 };
 
 #endif

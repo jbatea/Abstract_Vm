@@ -5,16 +5,17 @@ class Factory {
 
 	public:
 
-	static Factory *getFactory();
-  	static void deleteFactory();
+	static Factory * getFactory();
+  	static void      deleteFactory();
     IOperand const * createOperand( eOperandType type, std::string const & value ) const;
 
-	private:
-
-   	Factory( void ); // Default constructor
+	Factory( void ); // Default constructor
     Factory( Factory const & src ); // Copy constructor
     ~Factory( void ); // Destructor
     Factory & operator=( Factory const & rhs );// Assignement
+
+	private:
+
 	IOperand const * createInt8( std::string const & value ) const;
     IOperand const * createInt16( std::string const & value ) const;
     IOperand const * createInt32( std::string const & value ) const;

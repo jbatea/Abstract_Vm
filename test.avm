@@ -1,8 +1,9 @@
-push double(2.25)
-mul
-push int8(17)
-push int32(2)
-push int32(2)
+push float(-1.1)
+pop
+push float(-1.51)
+push float(0.1)
+push float(0.1)
+push float(0.1)
+div
 dump
-push int32(2)
 exit
