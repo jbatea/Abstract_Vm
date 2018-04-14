@@ -10,8 +10,10 @@ class Operand : public IOperand {
 		return;
 	}; // Default constructor
 
-	Operand<T>(T const & src) {
-		*this = src;
+	Operand<T>(Operand<T> const & src) {
+		this->_string = src.toString();
+		this->_type = src.getType();
+		this->_value = src.getValue();
 		return;
 	}; // Copy constructor
 
@@ -27,10 +29,10 @@ class Operand : public IOperand {
 	}; // Destructor
 
 	Operand<T> & operator=( Operand<T> const & rhs ) {
-		if (this != &rhs) {
+		if (*this != rhs) {
 			this->_type = rhs.getType();
 			this->_string = rhs.toString();
-			this->_value = stold(rhs.toString());
+			this->_value = rhs.getValue();
 		 }
 		 return *this;
 	 };
@@ -76,6 +78,10 @@ class Operand : public IOperand {
 	std::string const & toString( void ) const {
 		return this->_string;
 	}; // String representation of value
+
+	T       const & getValue(void) const {
+		return this->_value;
+	}
 
 	private:
 

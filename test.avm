@@ -1,8 +1,14 @@
 push float(-1.1)
-pop
-push float(-1.51)
+push double(12.12)
+sub
 push float(0.1)
-push float(0.1)
+mul
+push int32(256)
+add
+push int16(555)
+assert int16(555)
+push int8(66)
+print
 push float(0.1)
 div
 dump
