@@ -1,4 +1,22 @@
+div
+lo lo l odosdoaods
+push double(9)
+pop
+push int32(-5)
+assert fl
+print
 push float(-1.1)
+push int8(-5)
+push int8(-5.6)
+push int8(-5.6)
+push int8(5555555555555)
+assert double(-1.1)
+sub
+push float(-1.1)
+push int32(0)
+push double(0)
+dsadnakldnsakldnkldnlkn
+div
 push double(12.12)
 sub
 push float(0.1)

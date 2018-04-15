@@ -7,7 +7,7 @@
 
      // Copy constructor
      Factory::Factory(Factory const & src) {
-         *this = src;
+         this->_factory = src.getFactory();
          return;
      }
 
@@ -18,20 +18,17 @@
 
     // Assignement
     Factory & Factory::operator=( Factory const & rhs) {
-
         if (this != &rhs)
-            *this = rhs;
+            this->_factory = rhs.getFactory();
         return *this;
     }
 
-   	Factory * Factory::getFactory()
-    {
+   	Factory * Factory::getFactory() {
         if (!_factory) _factory =  new Factory();
         return _factory;
     }
 
-    void Factory::deleteFactory()
-    {
+    void Factory::deleteFactory() {
        if (_factory)
        {
        		delete _factory;
@@ -89,7 +86,7 @@
         	case DOUBLE: min = std::numeric_limits<double>::lowest(); max = DBL_MAX; break;
         	default: break;
         }
-		if (_value < min) throw AbstractVmException(type, "::UNDERFLOW Value -> " + value);
-		if (_value > max) throw AbstractVmException(type, "::OVERFLOW Value -> " + value);
+		if (_value < min) throw AbstractVmException(type, "Underflow on value:: " + value + " of type::");
+		if (_value > max) throw AbstractVmException(type, "Overflow on value:: " + value + " of type::");
         return _value;
 	}

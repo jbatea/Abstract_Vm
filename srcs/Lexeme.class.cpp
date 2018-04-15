@@ -13,7 +13,8 @@ Lexeme::Lexeme( std::string const & value, eCategory category) {
 
  // Copy constructor
  Lexeme::Lexeme(Lexeme const & src) {
-     *this = src;
+     this->_value = src.getValue();
+     this->_category = src.getCategory();
      return;
  }
 
@@ -25,8 +26,10 @@ Lexeme::~Lexeme( void ) {
 // Assignement
 Lexeme & Lexeme::operator=( Lexeme const & rhs) {
 
-    if (this != &rhs)
-        *this = rhs;
+    if (this != &rhs) {
+        this->_value = rhs.getValue();
+        this->_category = rhs.getCategory();
+    }
     return *this;
 }
 

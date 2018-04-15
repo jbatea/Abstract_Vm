@@ -55,6 +55,7 @@ enum eCategory {
 # include "./Operand.class.hpp"
 # include "./Lexeme.class.hpp"
 # include "./Lexer.class.hpp"
+# include "./Parser.class.hpp"
 # include "./AbstractVm.class.hpp"
 
 #endif

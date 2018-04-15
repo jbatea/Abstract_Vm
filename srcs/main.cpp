@@ -4,13 +4,6 @@ Factory *Factory::_factory = NULL;
 
 int     main(int ac, char **av)
 {
-    AbstractVm  abstractvm;
-
-   	try {
-     	abstractvm.getLexer().getArg(ac, av);
-     	abstractvm.parseLexemes();
-   	} catch (AbstractVmException e) {
-   		abstractvm.exit(e.what());
-   	}
+    AbstractVm  abstractvm(ac, av);
     return 0;
 }

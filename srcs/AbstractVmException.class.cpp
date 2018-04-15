@@ -6,7 +6,7 @@ AbstractVmException::AbstractVmException( void )  {
 }; // Default constructor
 
 AbstractVmException::AbstractVmException(AbstractVmException const & src) {
-	*this = src;
+	this->_exception = std::string(src.what());
 	return;
 }; // Copy constructor
 
@@ -25,9 +25,8 @@ AbstractVmException::~AbstractVmException( void ) {
 }; // Destructor
 
 AbstractVmException & AbstractVmException::operator=( AbstractVmException const & rhs ) {
-	if (this != &rhs) {
-		this->_exception = rhs.what();
-	}
+	if (this != &rhs)
+		this->_exception = std::string(rhs.what());
 	return *this;
 };
 
