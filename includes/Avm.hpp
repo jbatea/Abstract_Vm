@@ -49,6 +49,11 @@ enum eCategory {
 	COM
 };
 
+#define EXCEPTION (std::string)"\033[1;31m"
+#define SUCCESS     (std::string)"\033[1;32m"
+#define VAL       (std::string)"\033[1;34m"
+#define RESET      (std::string)"\033[0m"
+
 # include "./AbstractVmException.class.hpp"
 # include "./IOperand.class.hpp"
 # include "./Factory.class.hpp"

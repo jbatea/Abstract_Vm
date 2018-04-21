@@ -1,7 +1,7 @@
 #include "../includes/Avm.hpp"
 
 AbstractVmException::AbstractVmException( void )  {
-	this->_exception = "AbstractVmException::Unknow Error";
+	this->_exception = "Unknow Error";
 	return;
 }; // Default constructor
 
@@ -11,12 +11,12 @@ AbstractVmException::AbstractVmException(AbstractVmException const & src) {
 }; // Copy constructor
 
 AbstractVmException::AbstractVmException(std::string const & exception) {
-	this->_exception = "AbstractVmException::" + exception;
+	this->_exception = exception;
 	return;
 }
 
 AbstractVmException::AbstractVmException(eOperandType type, std::string const & exception) {
-	this->_exception = "AbstractVmException::" + exception + " " + this->_getTypeAsString(type);
+	this->_exception = exception + " " + this->_getTypeAsString(type);
 	return;
 }
 

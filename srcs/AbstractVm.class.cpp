@@ -41,9 +41,7 @@ Parser const & AbstractVm::getParser() const {
 
 void    AbstractVm::start(int ac, char **av) {
 
-	try {
-		this->_lexer.getArg(ac, av);
-		this->_parser.parseLexemes(this->_lexer);
-	} catch (AbstractVmException e) { this->getParser().exit(e.what()); }
+	this->_lexer.getArg(ac, av);
+	this->_parser.parseLexemes(this->_lexer);
 	return;
 }

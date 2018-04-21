@@ -17,7 +17,7 @@ class Lexer {
 
 	void 									_lexer( std::string const & line ) noexcept(false);
 	eCategory								_getLexemeCategory(std::string const & _lexeme);
-    void 									_getFile( char *av ) noexcept(false);
+    void 									_getFile( char **av ) noexcept(false);
     void 									_getInput( void ) noexcept(false);
     void                                    _checkExitInstr(void) noexcept(false);
     void                                    _checkArgs(int ac) const noexcept(false);

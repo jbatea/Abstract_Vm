@@ -49,7 +49,7 @@ void Parser::parseLexemes(Lexer const & lexer) {
         	    std::regex_match((*it)->getValue(), std::regex("(push|assert)")) ?
                 this->_doInstr((*it)->getInstruction(), (*(it + 1))->getValue()) :
                 this->_doInstr((*it)->getInstruction(), "");
-            } catch (AbstractVmException e) { std::cout << "\033[1;31m" << this->_getLastInstr() << ":: " << e.what() << "\033[0m" << std::endl; }
+            } catch (AbstractVmException e) { std::cout << EXCEPTION << this->_getLastInstr() << ":: " << e.what() << RESET << std::endl; }
         }
         *it++;
     }
@@ -65,7 +65,7 @@ std::deque<const IOperand *> const &  Parser::getStack( void ) const  {
 }
 
 void  Parser::pop( void ) noexcept(false) {
-    if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
+    if (this->_getStackRef().empty()) throw AbstractVmException("\nEmpty Stack");
     this->_getStackRef().pop_front();
     return;
 }
@@ -73,13 +73,14 @@ void  Parser::pop( void ) noexcept(false) {
 void  Parser::dump( void ) {
     std::deque<const IOperand *>::iterator it = this->_getStackRef().begin();
 
+	std::cout << SUCCESS << "Dump::" << RESET << std::endl;
     while (it != this->_getStackRef().end())
-        std::cout << (*it++)->toString() << std::endl;
+            std::cout << VAL << (*it++)->toString() << RESET << std::endl;
     return;
 }
 
 void Parser::exit(std::string const & error) const {
-    std::cout << "\033[1;31mExit::" << error << "\033[1m" << std::endl;
+    std::cout << SUCCESS << "Exit::" << error << RESET << std::endl;
     this->~Parser();
     std::exit(0);
 }
@@ -88,18 +89,18 @@ void Parser::assert(eOperandType type, std::string const & value) noexcept(false
 
     if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
     if (stold(this->_getStackRef()[0]->toString()) != stold(value))
-    	throw AbstractVmException("Expected Value:: " + value + " Front Stack Value:: " + this->_getStackRef()[0]->toString());
+    	throw AbstractVmException("\n" + VAL + value + RESET);
     if (this->_getStackRef()[0]->getType() != type)
 		throw AbstractVmException(this->_getStackRef()[0]->getType(), "Wrong Type:: Front Stack Type -> ");
-    std::cout << "Assert::Success:: Value:: " << value << std::endl;
+    std::cout << SUCCESS << "Assert::\n" << VAL << value << RESET << std::endl;
     return;
 }
 
 void Parser::print( void ) noexcept(false) {
 
-    if (this->_getStackRef().empty()) throw AbstractVmException("Empty Stack");
-    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("Not a 8bit integer");
-    std::cout << "Print: " <<  static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << std::endl;
+    if (this->_getStackRef().empty()) throw AbstractVmException("\nEmpty Stack");
+    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("\nNot a 8bit integer");
+    std::cout << SUCCESS << "Print:: " <<  std::endl << VAL << static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << RESET << std::endl;
     return;
 }
 
@@ -108,9 +109,9 @@ void				Parser::_doOp(eInstruction op) noexcept(false) {
     const IOperand         *v2;
     const IOperand         *result;
 
- 	if (this->_getStackRef().size() < 2) throw AbstractVmException("Missing operands");
+ 	if (this->_getStackRef().size() < 2) throw AbstractVmException("\nMissing operands");
  	if ((op == DIV || op == MOD) && stold(this->_getStackRef()[0]->toString()) == 0)
- 		throw AbstractVmException("Right Operand is 0");
+ 		throw AbstractVmException("\nRight Operand is 0");
     v1 = this->_getStackRef()[0];
     v2 = this->_getStackRef()[1];
     this->_getStackRef().erase(this->_getStackRef().begin(), this->_getStackRef().begin()+2);
@@ -135,7 +136,7 @@ void            Parser::_doInstr(eInstruction instr, std::string value) {
 	this->_lastInstr = instr;
 	switch (instr) {
 		case ADD: case SUB: case MUL: case DIV: case MOD: this->_doOp(instr); break;
-		case EXIT: this->exit("End Of Program"); break;
+		case EXIT: this->exit("\nInstruction exit was called"); break;
 		case PRINT: this->print(); break;
 		case ASSERT: this->assert(this->_parseType(value), this->_parseValue(value)); break;
 		case PUSH: this->create(this->_parseType(value), this->_parseValue(value)); break;

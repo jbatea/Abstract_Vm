@@ -86,7 +86,7 @@
         	case DOUBLE: min = std::numeric_limits<double>::lowest(); max = DBL_MAX; break;
         	default: break;
         }
-		if (_value < min) throw AbstractVmException(type, "Underflow on value:: " + value + " of type::");
-		if (_value > max) throw AbstractVmException(type, "Overflow on value:: " + value + " of type::");
+		if (_value < min) throw AbstractVmException(type, "Underflow::\n" + VAL + value);
+		if (_value > max) throw AbstractVmException(type, "Overflow::\n" + VAL + value);
         return _value;
 	}
