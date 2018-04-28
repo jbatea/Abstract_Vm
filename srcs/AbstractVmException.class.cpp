@@ -6,17 +6,18 @@ AbstractVmException::AbstractVmException( void )  {
 }; // Default constructor
 
 AbstractVmException::AbstractVmException(AbstractVmException const & src) {
-	this->_exception = std::string(src.what());
+	this->_exception = src._exception;
 	return;
 }; // Copy constructor
 
 AbstractVmException::AbstractVmException(std::string const & exception) {
 	this->_exception = exception;
+//	std:: cout << this->_exception << std::endl;
 	return;
 }
 
 AbstractVmException::AbstractVmException(eOperandType type, std::string const & exception) {
-	this->_exception = exception + " " + this->_getTypeAsString(type);
+	this->_exception = exception + " " + VAL + this->_getTypeAsString(type) + RESET;
 	return;
 }
 
@@ -26,12 +27,18 @@ AbstractVmException::~AbstractVmException( void ) {
 
 AbstractVmException & AbstractVmException::operator=( AbstractVmException const & rhs ) {
 	if (this != &rhs)
-		this->_exception = std::string(rhs.what());
+		this->_exception = rhs._exception;
 	return *this;
 };
 
 const char* AbstractVmException::what() const noexcept {
 	return this->_exception.c_str();
+}
+
+
+void AbstractVmException::toString() const noexcept {
+	std::cout << EXCEPTION << this->_exception << RESET << std::endl;
+	return;
 }
 
 const std::string  AbstractVmException::_getTypeAsString(eOperandType type) const {

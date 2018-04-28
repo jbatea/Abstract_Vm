@@ -17,6 +17,8 @@
 # include <float.h>
 # include <vector>
 # include <regex>
+#include <thread>
+#include <atomic>
 
 enum eOperandType
 {

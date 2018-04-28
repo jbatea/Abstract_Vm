@@ -1,5 +1,6 @@
 #include "../includes/Avm.hpp"
 
+
 // Default constructor
 Parser::Parser( void ) {
     return;
@@ -14,8 +15,7 @@ Parser::Parser( void ) {
  // Destructor
 Parser::~Parser( void ) {
     std::deque<const IOperand *>::iterator it = this->_getStackRef().begin();
-    while (it != this->_getStackRef().end())
-           (*it++)->~IOperand();
+    while (it != this->_getStackRef().end()) delete(*it++);
     return;
 }
 
@@ -40,19 +40,22 @@ eOperandType Parser::_parseType(std::string const & value) {
 	return it->second;
 }
 
-void Parser::parseLexemes(Lexer const & lexer) {
+void Parser::parseLexemes(Lexer const & lexer) noexcept(false) {
     std::deque<const Lexeme *>::const_iterator it = lexer.getLexemes().begin();
+    bool exit = false;
 
-    while (it != lexer.getLexemes().cend()) {
+    while (it != lexer.getLexemes().cend() && !exit) {
         if ((*it)->getCategory() == INSTR) {
             try {
         	    std::regex_match((*it)->getValue(), std::regex("(push|assert)")) ?
                 this->_doInstr((*it)->getInstruction(), (*(it + 1))->getValue()) :
                 this->_doInstr((*it)->getInstruction(), "");
-            } catch (AbstractVmException e) { std::cout << EXCEPTION << this->_getLastInstr() << ":: " << e.what() << RESET << std::endl; }
+            } catch (AbstractVmException e) { e.toString(); }
+            exit = !(*it)->getValue().compare("exit");
         }
         *it++;
     }
+    if (!exit) throw AbstractVmException("Error::"  + VAL + " Program doesn't have exit instruction" + RESET);
     return;
 }
 
@@ -65,7 +68,8 @@ std::deque<const IOperand *> const &  Parser::getStack( void ) const  {
 }
 
 void  Parser::pop( void ) noexcept(false) {
-    if (this->_getStackRef().empty()) throw AbstractVmException(VAL +  "Empty Stack" + RESET);
+    if (this->_getStackRef().empty()) throw AbstractVmException("Pop:: " + VAL +  "Empty Stack" + RESET);
+    delete(this->_getStackRef()[0]);
     this->_getStackRef().pop_front();
     return;
 }
@@ -79,28 +83,22 @@ void  Parser::dump( void ) {
     return;
 }
 
-void Parser::exit(std::string const & error) const {
-    std::cout << SUCCESS << "Exit::" << error << RESET << std::endl;
-    this->~Parser();
-    std::exit(0);
-}
-
 void Parser::assert(eOperandType type, std::string const & value) noexcept(false) {
 
-    if (this->_getStackRef().empty()) throw AbstractVmException(VAL + "Empty Stack" + RESET);
+    if (this->_getStackRef().empty()) throw AbstractVmException("Assert:: " + VAL + "Empty Stack" + RESET);
     if (stold(this->_getStackRef()[0]->toString()) != stold(value))
-    	throw AbstractVmException("\n" + VAL + value + RESET);
+    	throw AbstractVmException("Assert:: " + VAL + value + RESET);
     if (this->_getStackRef()[0]->getType() != type)
-		throw AbstractVmException(this->_getStackRef()[0]->getType(), "Wrong Type:: Front Stack Type -> ");
-    std::cout << SUCCESS << "Assert::\n" << VAL << value << RESET << std::endl;
+		throw AbstractVmException(this->_getStackRef()[0]->getType(),"Assert:: " + VAL +  "Wrong Type ::" + RESET);
+    std::cout << SUCCESS << "Assert:: " << VAL << value << RESET << std::endl;
     return;
 }
 
 void Parser::print( void ) noexcept(false) {
 
-    if (this->_getStackRef().empty()) throw AbstractVmException(VAL + "Empty Stack" + RESET);
-    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException(VAL + "Not a 8bit integer" + RESET);
-    std::cout << SUCCESS << "Print:: " <<  std::endl << VAL << static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << RESET << std::endl;
+    if (this->_getStackRef().empty()) throw AbstractVmException("Print:: " + VAL + "Empty Stack" + RESET);
+    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("Print:: " + VAL + "Not a 8bit integer" + RESET);
+    std::cout << SUCCESS << "Print:: " << VAL << static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << RESET << std::endl;
     return;
 }
 
@@ -109,9 +107,9 @@ void				Parser::_doOp(eInstruction op) noexcept(false) {
     const IOperand         *v2;
     const IOperand         *result;
 
- 	if (this->_getStackRef().size() < 2) throw AbstractVmException(VAL + "Missing operands" + RESET);
+ 	if (this->_getStackRef().size() < 2) throw AbstractVmException(this->_getInstr(op) + ":: " + VAL + "Missing operands" + RESET);
  	if ((op == DIV || op == MOD) && stold(this->_getStackRef()[0]->toString()) == 0)
- 		throw AbstractVmException(VAL + "Right Operand is 0" + RESET);
+ 		throw AbstractVmException(this->_getInstr(op) + ":: " + VAL + "Right Operand is 0" + RESET);
     v1 = this->_getStackRef()[0];
     v2 = this->_getStackRef()[1];
     this->_getStackRef().erase(this->_getStackRef().begin(), this->_getStackRef().begin()+2);
@@ -123,20 +121,21 @@ void				Parser::_doOp(eInstruction op) noexcept(false) {
     	case MOD: result = *v2 % *v1; break;
     	default: break;
     }
+    delete(v1);
+    delete(v2);
     this->_push(result);
     return;
 }
 
-std::string Parser::_getLastInstr(void) const {
+std::string Parser::_getInstr(eInstruction instr) const {
 	const std::string instrList[] = {"Push", "Pop", "Dump", "Assert", "Add", "Sub", "Mul", "Div", "Mod", "Print", "Exit"};
-	return instrList[this->_lastInstr];
+	return instrList[instr];
 }
 
 void            Parser::_doInstr(eInstruction instr, std::string value) {
-	this->_lastInstr = instr;
 	switch (instr) {
 		case ADD: case SUB: case MUL: case DIV: case MOD: this->_doOp(instr); break;
-		case EXIT: this->exit(VAL + " Instruction exit was called" + RESET); break;
+		case EXIT: std::cout << SUCCESS + "Exit:: " + VAL + "Instruction exit was called" + RESET << std::endl; break;
 		case PRINT: this->print(); break;
 		case ASSERT: this->assert(this->_parseType(value), this->_parseValue(value)); break;
 		case PUSH: this->create(this->_parseType(value), this->_parseValue(value)); break;

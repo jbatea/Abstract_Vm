@@ -1,5 +1,6 @@
 	#include "../includes/Avm.hpp"
 
+
     // Default constructor
     Factory::Factory( void ) {
         return;
@@ -29,8 +30,7 @@
     }
 
     void Factory::deleteFactory() {
-       if (_factory)
-       {
+       if (_factory) {
        		delete _factory;
            	_factory = NULL;
        }
@@ -76,7 +76,7 @@
 
         try { _value = stold(value);
         } catch (std::out_of_range e) {
-        	throw AbstractVmException(type, "::OUT_OF_RANGE Value -> " + value);
+        	throw AbstractVmException(type,"Out of range:: " + VAL + value + RESET);
         }
         switch (type) {
         	case INT8: min = INT8_MIN; max = INT8_MAX; break;
@@ -86,7 +86,7 @@
         	case DOUBLE: min = std::numeric_limits<double>::lowest(); max = DBL_MAX; break;
         	default: break;
         }
-		if (_value < min) throw AbstractVmException(type, "Underflow:: " + VAL + "Value: " + value + " Type:");
-		if (_value > max) throw AbstractVmException(type, "Overflow:: " + VAL + "Value: " + value + " Type:");
+		if (_value < min) throw AbstractVmException(type,"Underflow:: " + VAL  + value + " ::");
+		if (_value > max) throw AbstractVmException(type,"Overflow:: " + VAL  + value + " ::");
         return _value;
 	}

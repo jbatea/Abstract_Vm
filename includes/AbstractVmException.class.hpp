@@ -13,6 +13,7 @@ class AbstractVmException : public std::exception {
 
 	AbstractVmException(eOperandType type, std::string const & exception);
 	const char * what() const noexcept;
+	void toString() const noexcept;
 
 	private:
 

@@ -19,6 +19,7 @@ AbstractVm::AbstractVm( void ) {
 
  // Destructor
 AbstractVm::~AbstractVm( void ) {
+	Factory::deleteFactory();
     return;
 }
 
@@ -42,6 +43,8 @@ Parser const & AbstractVm::getParser() const {
 void    AbstractVm::start(int ac, char **av) {
 
 	this->_lexer.getArg(ac, av);
-	this->_parser.parseLexemes(this->_lexer);
+	try { this->_parser.parseLexemes(this->_lexer); } catch (AbstractVmException e) {
+		e.toString();
+	}
 	return;
 }
