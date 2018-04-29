@@ -44,8 +44,9 @@ void Lexer::_lexer(std::string const & line) noexcept(false) {
 	std::regex lex ("^((pop|dump|add|sub|mul|div|mod|print|exit)|((assert|push) (((int(8|16|32)\\(-?\\d+\\)))|((float|double)\\(-?\\d+[.]\\d+\\)))))?(\\s*;.*)?$");
 	std::regex instr ("^\\w*( \\w*\\(-?\\d+(.\\d+)?\\)?)?(\\s*;.*)?$");
 
-	if (!std::regex_match(line, instr)) throw AbstractVmException("Syntax error::  " + VAL + line + RESET);
-	if (!std::regex_match(line, lex)) throw AbstractVmException("Lexical error:: " + VAL + line + RESET);
+	if (!std::regex_match(line, instr) && !std::regex_match(line, instr)) throw AbstractVmException("Syntactic && Lexical error:: ", line);
+	if (!std::regex_match(line, instr)) throw AbstractVmException("Syntactic error::  ", line);
+	if (!std::regex_match(line, lex)) throw AbstractVmException("Lexical error:: ", line);
 	std::regex_replace(std::back_inserter(res), line.begin(), line.end(), std::regex(".*;.*$"), "$`");
 	stream.str(res);
 	while (std::getline(stream, _lexeme, ' '))
@@ -59,51 +60,52 @@ void Lexer::_timeoutHandler(bool *timeout) {
     return;
 }
 
-void Lexer::_getLine(std::string line) noexcept(false) {
-	try { this->_lexer(line); } catch (AbstractVmException e) { e.toString(); }
+void Lexer::_getLines(std::vector<std::string> lines) noexcept(false) {
+   	bool exit = false;
+	std::vector<std::string>::iterator it = lines.begin();
+
+    while (it != lines.end()) {
+         if (!(*it).compare("exit")) exit = true;
+         try { this->_lexer(*it++); } catch (AbstractVmException e) { e.toString(); }
+    }
+    if (!exit) throw AbstractVmException("Error::", " Program doesn't have exit instruction");
+	return;
 }
 
 void Lexer::_getFile(char *av) noexcept(false) {
 	std::string		line;
 	std::ifstream	file;
 	bool timeout = false;
-	bool exit = false;
 	std::vector<std::string> lines;
 
 	try {
 			file.open(av, std::ifstream::in);
-			if (!file.is_open()) throw AbstractVmException("Failed to open file:: " + VAL + av + RESET);
+			if (!file.is_open()) throw AbstractVmException("Failed to open file:: ", av);
 			std::thread(&Lexer::_timeoutHandler, this, &timeout).detach();
 			while (std::getline(file, line) && timeout == false) lines.push_back(line);
-			if (timeout) throw AbstractVmException("Timeout on reading file:: " + VAL + av + RESET);
-			std::vector<std::string>::iterator it = lines.begin();
-            if (!timeout) while (it != lines.end()) {
-                if (!(*it).compare("exit")) exit = true;
-                this->_getLine(*it++);
-            }
+			if (timeout) throw AbstractVmException("Timeout on reading file:: ", av);
+			this->_getLines(lines);
 			file.close();
-			if (!exit) throw AbstractVmException("Error::"  + VAL + " Program doesn't have exit instruction" + RESET);
 		} catch (AbstractVmException e) { e.toString(); }
 	return;
 }
 
-void Lexer::_getInput(void) noexcept(false) {
+void Lexer::_getInput(void) {
 	std::string		line;
-	while (std::getline(std::cin, line) && line.compare(";;")) this->_getLine(line);
+	std::vector<std::string> lines;
+	while (std::getline(std::cin, line) && line.compare(";;")) lines.push_back(line);
+	this->_getLines(lines);
 	return;
 }
 
 void Lexer::_checkArgs(int ac) const noexcept(false) {
-	if (ac > 2) throw AbstractVmException("Usage::" + VAL + " ./avm Or ./avm ./sample.avm");
+	if (ac > 2) throw AbstractVmException("Usage::", " ./avm Or ./avm ./sample.avm");
 	return;
 }
 
 void Lexer::getArg(int ac, char **av) noexcept(false) {
 	try { this->_checkArgs(ac); } catch (AbstractVmException e) { e.toString(); }
-
-   	try {
-   	    (ac > 1) ? this->_getFile(av[1]) : this->_getInput();
-   	} catch (AbstractVmException e) { e.toString(); }
+   	try { (ac > 1) ? this->_getFile(av[1]) : this->_getInput(); } catch (AbstractVmException e) { e.toString(); }
 	return;
 }
 

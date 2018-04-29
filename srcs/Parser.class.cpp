@@ -67,7 +67,7 @@ std::deque<const IOperand *> const &  Parser::getStack( void ) const  {
 }
 
 void  Parser::pop( void ) noexcept(false) {
-    if (this->_getStackRef().empty()) throw AbstractVmException("Pop:: " + VAL +  "Empty Stack" + RESET);
+    if (this->_getStackRef().empty()) throw AbstractVmException("Pop:: ","Empty Stack");
     delete(this->_getStackRef()[0]);
     this->_getStackRef().pop_front();
     return;
@@ -84,19 +84,19 @@ void  Parser::dump( void ) {
 
 void Parser::assert(eOperandType type, std::string const & value) noexcept(false) {
 
-    if (this->_getStackRef().empty()) throw AbstractVmException("Assert:: " + VAL + "Empty Stack" + RESET);
+    if (this->_getStackRef().empty()) throw AbstractVmException("Assert:: ","Empty Stack");
     if (stold(this->_getStackRef()[0]->toString()) != stold(value))
-    	throw AbstractVmException("Assert:: " + VAL + value + RESET);
+    	throw AbstractVmException("Assert:: ", value);
     if (this->_getStackRef()[0]->getType() != type)
-		throw AbstractVmException(this->_getStackRef()[0]->getType(),"Assert:: " + VAL +  "Wrong Type ::" + RESET);
+		throw AbstractVmException(this->_getStackRef()[0]->getType(),"Assert:: ","Wrong Type ::");
     std::cout << SUCCESS << "Assert:: " << VAL << value << RESET << std::endl;
     return;
 }
 
 void Parser::print( void ) noexcept(false) {
 
-    if (this->_getStackRef().empty()) throw AbstractVmException("Print:: " + VAL + "Empty Stack" + RESET);
-    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("Print:: " + VAL + "Not a 8bit integer" + RESET);
+    if (this->_getStackRef().empty()) throw AbstractVmException("Print:: ","Empty Stack");
+    if (this->_getStackRef()[0]->getType() != INT8) throw AbstractVmException("Print:: ","Not a 8bit integer");
     std::cout << SUCCESS << "Print:: " << VAL << static_cast<char>(stoi(this->_getStackRef()[0]->toString())) << RESET << std::endl;
     return;
 }
@@ -106,9 +106,9 @@ void				Parser::_doOp(eInstruction op) noexcept(false) {
     const IOperand         *v2;
     const IOperand         *result;
 
- 	if (this->_getStackRef().size() < 2) throw AbstractVmException(this->_getInstr(op) + ":: " + VAL + "Missing operands" + RESET);
+ 	if (this->_getStackRef().size() < 2) throw AbstractVmException(this->_getInstr(op) + ":: ","Missing operands");
  	if ((op == DIV || op == MOD) && stold(this->_getStackRef()[0]->toString()) == 0)
- 		throw AbstractVmException(this->_getInstr(op) + ":: " + VAL + "Right Operand is 0" + RESET);
+ 		throw AbstractVmException(this->_getInstr(op) + ":: ","Right Operand is 0");
     v1 = this->_getStackRef()[0];
     v2 = this->_getStackRef()[1];
     this->_getStackRef().erase(this->_getStackRef().begin(), this->_getStackRef().begin()+2);
@@ -145,7 +145,7 @@ void            Parser::_doInstr(eInstruction instr, std::string value) {
 	return;
 }
 
-void  Parser::create(eOperandType type, std::string const & value ) noexcept(false) {
+void  Parser::create(eOperandType type, std::string const & value ) {
     this->_push(Factory::getFactory()->createOperand(type, value));
     return;
 };

@@ -37,8 +37,10 @@
     }
 
 	IOperand const *    Factory::createOperand( eOperandType type, std::string const & value ) const {
-		typedef IOperand const *(Factory::*createPtr)(std::string const &) const;
-		 std::vector<createPtr> factory { &Factory::createInt8, &Factory::createInt16, &Factory::createInt32, &Factory::createFloat, &Factory::createDouble };
+		 std::vector<IOperand const *(Factory::*)(std::string const &) const> factory {
+		    &Factory::createInt8, &Factory::createInt16, &Factory::createInt32,
+		    &Factory::createFloat, &Factory::createDouble
+		 };
 		 return (this->*factory[type]) (value);
 	}; // Create new operand
 
@@ -69,7 +71,7 @@
 
         try { _value = stold(value);
         } catch (std::out_of_range e) {
-        	throw AbstractVmException(type,"Out of range:: " + VAL + value + RESET);
+        	throw AbstractVmException(type,"Out of range:: ", value);
         }
         switch (type) {
         	case INT8: min = INT8_MIN; max = INT8_MAX; break;
@@ -79,7 +81,7 @@
         	case DOUBLE: min = std::numeric_limits<double>::lowest(); max = DBL_MAX; break;
         	default: break;
         }
-		if (_value < min) throw AbstractVmException(type,"Underflow:: " + VAL  + value + " ::");
-		if (_value > max) throw AbstractVmException(type,"Overflow:: " + VAL  + value + " ::");
+		if (_value < min) throw AbstractVmException(type,"Underflow:: ", value + " ::");
+		if (_value > max) throw AbstractVmException(type,"Overflow:: ", value + " ::");
         return _value;
 	}

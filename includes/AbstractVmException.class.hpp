@@ -6,12 +6,12 @@ class AbstractVmException : public std::exception {
 	public:
 
 	AbstractVmException( void ); // Default constructor
-	AbstractVmException(std::string const & exception);
+	AbstractVmException(std::string const & exception, std::string const & value);
 	~AbstractVmException( void );// Destructor
 	AbstractVmException & operator=( AbstractVmException const & rhs );// Assignement
 	AbstractVmException(AbstractVmException const & src); // Copy constructor
 
-	AbstractVmException(eOperandType type, std::string const & exception);
+	AbstractVmException(eOperandType type, std::string const & exception, std::string const & value);
 	const char * what() const noexcept;
 	void toString() const noexcept;
 
@@ -19,7 +19,8 @@ class AbstractVmException : public std::exception {
 
 	const std::string						_getTypeAsString(eOperandType type) const;
 
-	std::string _exception;
+	std::string _error;
+	std::string _value;
 };
 
 #endif
