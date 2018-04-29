@@ -53,33 +53,37 @@ void Lexer::_lexer(std::string const & line) noexcept(false) {
 	return;
 }
 
+void Lexer::_timeoutHandler(bool *timeout) {
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+    *timeout = true;
+    return;
+}
+
 void Lexer::_getLine(std::string line) noexcept(false) {
 	try { this->_lexer(line); } catch (AbstractVmException e) { e.toString(); }
 }
 
-void Lexer::_getFile(int ac, char **av) noexcept(false) {
+void Lexer::_getFile(char *av) noexcept(false) {
 	std::string		line;
 	std::ifstream	file;
 	bool timeout = false;
+	bool exit = false;
+	std::vector<std::string> lines;
 
-	for (int i = 1; i < ac; i++) {
-
-		try {
-			file.open(av[i], std::ifstream::in);
-			if (!file.is_open()) throw AbstractVmException("Failed to open file:: " + VAL + av[i] + RESET);
-			std::thread([&]{
-					std::this_thread::sleep_for(std::chrono::seconds(1));
-                     timeout = true;
-            }).detach();
-			while (std::getline(file, line) && timeout == false) {
-				this->_getLine(line);
-				timeout = false;
-			}
-			if (timeout) throw AbstractVmException("Failed to read file :: " + VAL + av[i] + RESET);
+	try {
+			file.open(av, std::ifstream::in);
+			if (!file.is_open()) throw AbstractVmException("Failed to open file:: " + VAL + av + RESET);
+			std::thread(&Lexer::_timeoutHandler, this, &timeout).detach();
+			while (std::getline(file, line) && timeout == false) lines.push_back(line);
+			if (timeout) throw AbstractVmException("Timeout on reading file:: " + VAL + av + RESET);
+			std::vector<std::string>::iterator it = lines.begin();
+            if (!timeout) while (it != lines.end()) {
+                if (!(*it).compare("exit")) exit = true;
+                this->_getLine(*it++);
+            }
 			file.close();
-			return;
+			if (!exit) throw AbstractVmException("Error::"  + VAL + " Program doesn't have exit instruction" + RESET);
 		} catch (AbstractVmException e) { e.toString(); }
-	}
 	return;
 }
 
@@ -96,7 +100,10 @@ void Lexer::_checkArgs(int ac) const noexcept(false) {
 
 void Lexer::getArg(int ac, char **av) noexcept(false) {
 	try { this->_checkArgs(ac); } catch (AbstractVmException e) { e.toString(); }
-   	(ac > 1) ? this->_getFile(ac, av) : this->_getInput();
+
+   	try {
+   	    (ac > 1) ? this->_getFile(av[1]) : this->_getInput();
+   	} catch (AbstractVmException e) { e.toString(); }
 	return;
 }
 

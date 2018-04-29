@@ -55,7 +55,6 @@ void Parser::parseLexemes(Lexer const & lexer) noexcept(false) {
         }
         *it++;
     }
-    if (!exit) throw AbstractVmException("Error::"  + VAL + " Program doesn't have exit instruction" + RESET);
     return;
 }
 

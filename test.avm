@@ -1,15 +1,4 @@
 push int32(42)
-push int32(33)
-push int8(12)
-push double(36.36)
-push float(4526.23)
-mum
-add
-push float(44.55)
-mul
-push double(42.42)
-push int32(42)
+push int8(2)
+sub
 dump
-pop
-assert double(42.42)
-exit

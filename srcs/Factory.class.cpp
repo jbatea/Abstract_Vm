@@ -37,16 +37,9 @@
     }
 
 	IOperand const *    Factory::createOperand( eOperandType type, std::string const & value ) const {
-
 		typedef IOperand const *(Factory::*createPtr)(std::string const &) const;
-		createPtr a[] = {
-			&Factory::createInt8 ,
-			&Factory::createInt16 ,
-			&Factory::createInt32,
-			&Factory::createFloat,
-			&Factory::createDouble
-		 };
-		 return (this->*a[type]) (value);
+		 std::vector<createPtr> factory { &Factory::createInt8, &Factory::createInt16, &Factory::createInt32, &Factory::createFloat, &Factory::createDouble };
+		 return (this->*factory[type]) (value);
 	}; // Create new operand
 
 	IOperand const *    Factory::createInt8( std::string const & value ) const {
