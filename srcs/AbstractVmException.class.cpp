@@ -20,7 +20,7 @@ AbstractVmException::AbstractVmException(std::string const & exception, std::str
 }
 
 AbstractVmException::AbstractVmException(eOperandType type, std::string const & exception, std::string const & value) {
-	this->_error = exception + " " + VAL + this->_getTypeAsString(type) + RESET;
+	this->_error = exception + VAL + this->_getTypeAsString(type) + ":: " + RESET;
 	this->_value = value;
 	return;
 }

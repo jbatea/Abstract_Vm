@@ -76,9 +76,8 @@ void  Parser::pop( void ) noexcept(false) {
 void  Parser::dump( void ) {
     std::deque<const IOperand *>::iterator it = this->_getStackRef().begin();
 
-	std::cout << SUCCESS << "Dump::" << RESET << std::endl;
     while (it != this->_getStackRef().end())
-            std::cout << VAL << (*it++)->toString() << RESET << std::endl;
+            std::cout << VAL << stod((*it++)->toString()) << RESET << std::endl;
     return;
 }
 
@@ -89,7 +88,6 @@ void Parser::assert(eOperandType type, std::string const & value) noexcept(false
     	throw AbstractVmException("Assert:: ", value);
     if (this->_getStackRef()[0]->getType() != type)
 		throw AbstractVmException(this->_getStackRef()[0]->getType(),"Assert:: ","Wrong Type ::");
-    std::cout << SUCCESS << "Assert:: " << VAL << value << RESET << std::endl;
     return;
 }
 
@@ -134,7 +132,7 @@ std::string Parser::_getInstr(eInstruction instr) const {
 void            Parser::_doInstr(eInstruction instr, std::string value) {
 	switch (instr) {
 		case ADD: case SUB: case MUL: case DIV: case MOD: this->_doOp(instr); break;
-		case EXIT: std::cout << SUCCESS + "Exit:: " + VAL + "Instruction exit was called" + RESET << std::endl; break;
+		case EXIT: break;
 		case PRINT: this->print(); break;
 		case ASSERT: this->assert(this->_parseType(value), this->_parseValue(value)); break;
 		case PUSH: this->create(this->_parseType(value), this->_parseValue(value)); break;
