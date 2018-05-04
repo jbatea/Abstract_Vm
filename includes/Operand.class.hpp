@@ -17,12 +17,12 @@ class Operand : public IOperand {
 		return;
 	}; // Copy constructor
 
-	Operand<T>(eOperandType type, T value) {
-		this->_type = type;
-		this->_string = std::to_string(value);
-		this->_value = value;
-		return;
-	}
+	Operand<T>(eOperandType type, std::string const & value) {
+    	this->_type = type;
+    	this->_string = value;
+    	this->_value = stold(value);
+    	return;
+    }
 
 	~Operand<T>( void ) {
 		return;
@@ -82,8 +82,6 @@ class Operand : public IOperand {
 	T       const & getValue(void) const {
 		return this->_value;
 	}
-
-	private:
 
 	T 					_value;
 	std::string			_string;

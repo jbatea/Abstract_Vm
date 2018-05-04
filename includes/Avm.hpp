@@ -19,6 +19,7 @@
 # include <regex>
 #include <thread>
 #include <atomic>
+# include <iomanip>
 
 enum eOperandType
 {

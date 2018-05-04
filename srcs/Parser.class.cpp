@@ -76,8 +76,7 @@ void  Parser::pop( void ) noexcept(false) {
 void  Parser::dump( void ) {
     std::deque<const IOperand *>::iterator it = this->_getStackRef().begin();
 
-    while (it != this->_getStackRef().end())
-            std::cout << VAL << stod((*it++)->toString()) << RESET << std::endl;
+    while (it != this->_getStackRef().end()) std::cout << VAL << (*it++)->toString() << RESET << std::endl;
     return;
 }
 

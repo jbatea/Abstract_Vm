@@ -64,7 +64,7 @@
 		return new Operand<double>(DOUBLE, this->_checkRange(value, DOUBLE));
 	}; // Create double operand
 
-	long double Factory::_checkRange(std::string const & value, eOperandType type) const noexcept(false) {
+	std::string const & Factory::_checkRange(std::string const & value, eOperandType type) const noexcept(false) {
 		long double _value;
 		long double min;
 		long double max;
@@ -83,5 +83,5 @@
         }
 		if (_value < min) throw AbstractVmException(type,"Underflow:: ", value);
 		if (_value > max) throw AbstractVmException(type,"Overflow:: ", value);
-        return _value;
+        return value;
 	}
